@@ -1,0 +1,12 @@
+const {getAllTasks, getByIdTask, createTask, deleteTask, updateTask } = require('../controllers/todoListController')
+
+const express = require('express')
+const route = express.Router()
+
+route.get('/', getAllTasks)
+route.get('/:id', getByIdTask)
+route.post('/', createTask)
+route.delete('/:id', deleteTask)
+route.patch('/:id', updateTask)
+
+module.exports = route
