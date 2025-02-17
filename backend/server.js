@@ -8,14 +8,13 @@ const connectDB = require('./config/db.js')
 const authRoute = require('./src/routes/authRoute.js')
 const userRoute = require('./src/routes/userRoute.js')
 const restaurantRoute = require('./src/routes/resturantRoute.js')
-const todoListRoute = require("./src/routes/todoListRoute.js")
 const errorMiddleware = require('./src/middleware/errorMiddleware.js')
 const foodRoute = require('./src/routes/foodRoute.js')
 const categoryRoute = require('./src/routes/categoryRoute.js')
 const orderRoute = require('./src/routes/orderRoute.js')
 const deliveryRoute = require('./src/routes/deliveryRoute.js')
 const cartRoute = require('./src/routes/cartRoute.js')
-
+const todoRoute = require("./src/routes/todoListRoute.js")
 
 //dotenv configuration
 dotenv.config()
@@ -40,7 +39,7 @@ app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
 //route
 //URL:http://localhost:3000
 
-app.use("/api/v1/task", todoListRoute)
+app.use("/api/v1/task", todoRoute)
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/user", userRoute)
 app.use('/api/v1/restaurant', restaurantRoute)

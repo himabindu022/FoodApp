@@ -1,8 +1,8 @@
-const {getAllTasks, getByIdTask, createTask, deleteTask, updateTask } = require('../controllers/todoListController')
-
 const express = require('express')
 const route = express.Router()
 
+const {getAllTasks, getByIdTask, createTask, deleteTask, updateTask } = require('../controllers/todoListController')
+//const  todoSchema  = require('../validations/todoList.validation')
 route.get('/', getAllTasks)
 route.get('/:id', getByIdTask)
 route.post('/', createTask)
