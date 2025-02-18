@@ -1,5 +1,9 @@
 const { Todo } = require('../models/todoListModel')
-const  todoValidate = require('../validations/todoList.validation')
+
+const ObjectId = require('mongoose').Types.ObjectId;
+//Todo.findById(ObjectId("your_valid_object_id_here"));
+
+//const  todoValidate = require('../validations/todoList.validation')
 
 const getAllTasks = async (req, res) => {
     try {
@@ -14,18 +18,18 @@ const getAllTasks = async (req, res) => {
     }
 }
 
-const getByIdTask = async (req, res) => {
-    try {
-        const todo = await Todo.findById({_id:req.params.id})
+// const getByIdTask = async (req, res) => {
+//     try {
+//         const todo = await Todo.findById(req.params.id)
 
-        if(!todo) {
-            return res.status(404).json({ message: 'Task not found' })
-        }
-        res.status(200).json({message: 'Successfully received data',Data:todo})
-    } catch (error) {
-        console.log(error)
-    }
-}
+//         if(!todo) {
+//             return res.status(404).json({ message: 'Task not found' })
+//         }
+//         res.status(200).json({message: 'Successfully received data',Data:todo})
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
 const createTask = async (req, res) => {
     try {
@@ -84,10 +88,25 @@ const deleteTask = async (req, res) => {
     }
 }
 
+const completedTasks = async(req, res) => {
+    try {
+        const todo = await Todo.find({});
+        console.log(todo)
+        const completed = await Todo.fliter(data => data.status === 'completed')
+     
+        return res.status(200).json({ message: 'completed tasks', Data:todo ,completedCount:completed.length })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
 module.exports = {
     getAllTasks,
-    getByIdTask,
+    //getByIdTask,
     createTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    completedTasks
 }
