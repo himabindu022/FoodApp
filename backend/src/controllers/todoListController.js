@@ -1,9 +1,9 @@
 const { Todo } = require('../models/todoListModel')
-
-const ObjectId = require('mongoose').Types.ObjectId;
-//Todo.findById(ObjectId("your_valid_object_id_here"));
-
 //const  todoValidate = require('../validations/todoList.validation')
+
+const successResponse = require('../utils/successResponse.js')
+const errorResponse = require('../utils/errorResponse.js')
+const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const getAllTasks = async (req, res) => {
     try {
@@ -18,18 +18,18 @@ const getAllTasks = async (req, res) => {
     }
 }
 
-// const getByIdTask = async (req, res) => {
-//     try {
-//         const todo = await Todo.findById(req.params.id)
+const getByIdTask = async (req, res) => {
+    try {
+        const todo = await Todo.findById(req.params.id)
 
-//         if(!todo) {
-//             return res.status(404).json({ message: 'Task not found' })
-//         }
-//         res.status(200).json({message: 'Successfully received data',Data:todo})
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
+        if(!todo) {
+            return res.status(404).json({ message: 'Task not found' })
+        }
+        res.status(200).json({message: 'Successfully received data',Data:todo})
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const createTask = async (req, res) => {
     try {

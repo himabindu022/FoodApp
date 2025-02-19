@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require("bcrypt")
 const jwt  = require('jsonwebtoken')
 const { User } = require('../models/userModel.js'); // Ensure correct path
+const successResponse = require('../utils/successResponse.js')
+const errorResponse = require('../utils/errorResponse.js')
+const httpStatusCode = require('../constants/httpStatusCode.js')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -12,13 +15,13 @@ const registerController = async (req, res) => {
         console.log(req.body)
 
         if (!username || !email || !password || !phone || !address) {
-            return res.status(400).send({ message: 'Please provide all the fields' });
+            errorResponse(res,httpStatusCode.BAD_REQUEST,bad_request, 'Please provide all the fields');
         }
 
         const user = await User.findOne({email});
 
         if (user) {
-            return res.status(400).send({ message: 'Email already taken' });
+            errorResponse(res,httpStatusCode.BAD_REQUEST,bad_request,'Email already taken');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -31,10 +34,12 @@ const registerController = async (req, res) => {
             address
         });
         await newUser.save();
-        res.status(201).send({ message: 'User created successfully', user: newUser });
+
+        successResponse(res,httpStatusCode.CREATED, created, 'User created successfully', newUser );
+
     } catch (error) {
         console.error('Error details:', error); // More detailed logging
-        res.status(500).send({ message: 'Error in registering user' });
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, "server error");
     }
 };
 
@@ -46,20 +51,20 @@ const login = async (req,res) => {
 
         //validation
         if(!email || !password){
-            return res.status(400).send({message: 'Please provide both email and password'})
+            errorResponse(res, httpStatusCode.BAD_REQUEST, error, 'Please provide all the fields');
         }
 
         //check user
         const user = await User.find({ email })
 
         if (!user) {
-            return res.status(404).send({message:'user not found'})
+            successResponse(res,httpStatusCode.NOT_FOUND, error,'user not found')
         }
         const token = jwt.sign({id: user._id}, process.env.SECRET_KEY, { expiresIn: '6d' })
-        return res.status(200).send({message:'Login sucessfully', user:user, token: token})
+        successResponse(res.httpStatusCode.CREATED, success, 'Login sucessfully', user, token)
     } catch (error) { 
         console.log(error)
-        res.status(500).send({message: 'error in login'})
+        errorResponse(res.httpStatusCode.INTERNAL_SERVER_ERROR, error, 'error in login')
     }
 }
 

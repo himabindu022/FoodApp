@@ -1,23 +1,28 @@
 const { Category } = require('../models/categoryModel')
 
+const successResponse = require('../utils/successResponse.js')
+const errorResponse = require('../utils/errorResponse.js')
+const httpStatusCode = require('../constants/httpStatusCode.js')
+
 const createCategory = async(req, res) => {
     try {
         const { title } = req.body
         const imageUrl = req.file ? `${req.file.filename}` : null
         console.log(imageUrl)
         console.log(req.file)
+
        // if(!title) {
        //     return res.status(400).json({message:'fill the field'})
        // }
-
         //const image = req.File ? '/uploads/'+ req.file.fileName : null
         //console.log(image)
+
         const category = new Category({
             title,
             imageUrl
         })
         await category.save()
-        return res.status(200).json({message:'successfully created category', category: category})
+        successResponse(res,httpStatusCode.CREATED,success,'successfully created category', category)
     } catch (error) {
         console.log(error)
     }
@@ -29,11 +34,12 @@ const getAllCategories = async(req, res) => {
         const category = await Category.find()
 
         if(!category) {
-            return res.status(404).json({message:'No data found'})
+            errorResponse(res,httpStatusCode.NOT_FOUND, error,'No data found')
         }
-        return res.status(200).json({message:'successfully received', category: category})
+        successResponse( res,httpStatusCode.CREATED,success, 'successfully received', category)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
     }
 }
 
@@ -45,9 +51,10 @@ const getByIdCategory = async(req, res) => {
         if(!category) {
             return res.status(404).json({message:'No data found'})
         }
-        return res.status(200).json({message:'successfully received', category: category})
+        successResponse(res,httpStatusCode.CREATED,success,'successfully received', category)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
     }
 }
 
@@ -61,11 +68,11 @@ const updateCategory = async(req, res) => {
         //console.log(req.file)
 
         if(!category) {
-            return res.status(404).json({message:'no data found', category: category})
+            errorResponse(res,httpStatusCode.NOT_FOUND,error,'no data found')
         }
         
         if(!req.file) {
-            return res.status(400).json({message:' no upload  file'})
+            errorResponse(res, httpStatusCode.NOT_FOUND,error,' no upload  file')
         }
 
         const image = req.file ? `${req.file.filename}` : null
@@ -74,10 +81,11 @@ const updateCategory = async(req, res) => {
         category.title = title ?? category.title;
         category.imageUrl = image ?? category.imageUrl;
        await category.save()
-       return res.status(200).json({ category: category})
+       successResponse(res,httpStatusCode.CREATED,success,'Updated successfully', category)
 
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
     }
 }
 
@@ -86,12 +94,13 @@ const deleteCategory = async(req, res) => {
         const category = await Category.findByIdAndDelete(req.params.id)
 
         if(!category) {
-            return res.status(404).json({message:'no data found', category: category})
+            errorResponse(res,httpStatusCode.NOT_FOUND,success,'no data found', category)
         }
 
-        return res.status(200).json({message:'successfully deleted data', category: category})
+        successResponse(res,httpStatusCode.CREATED,success,'successfully deleted data', category)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
     }
 }
 

@@ -1,6 +1,9 @@
 const { Food } = require('../models/foodModel') 
 const mongoose = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId
+
+const successResponse = require('../utils/successResponse.js')
+const errorResponse = require('../utils/errorResponse.js')
+const httpStatusCode = require('../constants/httpStatusCode.js')
 
 
 const getAllFood = async(req, res, next) => {
@@ -8,12 +11,14 @@ const getAllFood = async(req, res, next) => {
         const foods = await Food.find()
         console.log(foods)
         if(!foods) {
-            return res.status(404).json({ message: "No foods found" })
+            errorResponse(res,httpStatusCode.NOT_FOUND,error, "No foods found" )
         }
         console.log(foods)
-        return res.status(200).json({message:'received all food data',foods })
+        successResponse(res,httpStatusCode.CREATED, success,'received all food data',foods )
     } catch (error) {
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR,error, "Internal server error")
         next(error)
+
     }
 }
 
@@ -27,6 +32,7 @@ const getFood = async(req, res, next) => {
         }
         return res.status(200).json({message:"received food data", food:food })
     } catch (error) {
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
         next(error)
     }
 }
@@ -51,6 +57,7 @@ const createFood = async(req, res, next) => {
         await createFood.save()
         return res.status(201).json({message:'created successfully', Food :createFood})
     } catch (error) {
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
         next(error)
     }
 }
@@ -76,6 +83,7 @@ const updateFood = async(req, res) => {
         await Food.findByIdAndUpdate({_id:req.params.id}, updateFood, {new: true})
     } catch (error) {
         console.log(error)
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
     }
 }
 
@@ -113,7 +121,8 @@ const foodAggre = async (req, res) => {
         return res.status(200).json(foodss);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Server error" });
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
+
     }
 };
 

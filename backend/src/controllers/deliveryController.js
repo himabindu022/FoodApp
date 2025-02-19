@@ -1,16 +1,21 @@
 const { Delivery } = require('../models/deliveryModel.js')
 
+const successResponse = require('../utils/successResponse.js')
+const errorResponse = require('../utils/errorResponse.js')
+const httpStatusCode = require('../constants/httpStatusCode.js')
+
 const createDelivery = async(req, res) => {
     try {
         const {name, address, city, phone, order } = req.body
 
         if(!name||!address||!city||!phone||!order) {
-            return res.status(400).json({message: 'Please fill in all fields.'})
+            errorResponse(res, httpStatusCode.NOT_FOUND, error, 'Please fill in all fields.')
         }
         const delivery = await Delivery.create(req.body)
-        return res.json(delivery)
+        successResponse(res,httpStatusCode.CREATED, success, 'created successfully', delivery)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
     }
 }
 
@@ -30,12 +35,16 @@ const updateDelivery = async(req, res) => {
         delivery.city = city ?? delivery.city,
         delivery.phone = phone ?? delivery.phone,
         delivery.order = order ?? delivery.order
+
         await delivery.save
         console.log(delivery)
+
         const newDelivery = await Delivery.findByIdAndUpdate({_id:req.params.id}, delivery,{new:true})
-        return res.status(404).json({ message: 'Updated Successfully ', newDelivery });
+        successResponse(res,httpStatusCode.CREATED,success,'Updated Successfully ', newDelivery );
+
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
     }
 }
 
@@ -44,11 +53,13 @@ const getAllDelivery = async(req,res) => {
         const delivery = await Delivery.find()
 
         if(!delivery) {
-            return res.status(404).json({message: 'Delivery not found.'})
+            errorResponse(res,httpStatusCode.NOT_FOUND,error, 'Delivery not found')
         }
-        return res.json(delivery)
+        successResponse(res, httpStatusCode.CREATED,success,'successfully received', delivery)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
+
     }
 }
 
@@ -58,11 +69,13 @@ const getByIdDelivery = async(req, res) => {
         const  delivery = await Delivery.findById(id).populate('order')
 
         if(!delivery) {
-            return res.status(404).json({message: 'Delivery not found.'})
+            errorResponse(res, httpStatusCode.NOT_FOUND,error, 'Delivery not found.')
         }
-        return res.json({message:"successfully received",delivery})
+        successResponse(res, httpStatusCode.CREATED, success,"successfully received", delivery)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
+
     }
 }
 
@@ -72,11 +85,13 @@ const deleteDelivery = async(req, res) => {
         const delivery = await Delivery.findByIdAndDelete(id)
 
         if(!delivery) {
-            return res.status(404).json({message: 'Delivery not found.'})
+            errorResponse(res, httpStatusCode.NOT_FOUND, error,'Delivery not found')
         }
-        return res.json({message: 'Delivery deleted successfully.'})
+        successResponse(res,httpStatusCode.CREATED,success,'Delivery deleted successfully', delivery)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
+
     }
 
 }
