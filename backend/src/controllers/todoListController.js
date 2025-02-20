@@ -1,9 +1,8 @@
 const { Todo } = require('../models/todoListModel')
-//const  todoValidate = require('../validations/todoList.validation')
-
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
+const  todoValidation = require('../validations/todoListValidation.js')
 
 const getAllTasks = async (req, res) => {
     try {
@@ -34,16 +33,17 @@ const getByIdTask = async (req, res) => {
 const createTask = async (req, res) => {
     try {
         const { title, description, status, dueDate} = req.body
-         console.log(req.body)
-        if(!title ||!description ||!status ||!dueDate ||!createdAt) {
-            return res.status(404).json({ message: 'Fill the all the fields' })
-        }
+        //console.log(req.body)
+        // if(!title ||!description ||!status ||!dueDate ||!createdAt) {
+        //     return res.status(404).json({ message: 'Fill the all the fields' })
+        // }
 
         const newData = new Todo({
             title, 
             description, 
             status, 
             dueDate
+            
         })
         await newData.save()
         return res.status(200).json({ message: 'Task created successfully', Data:newData })
@@ -104,7 +104,7 @@ const completedTasks = async(req, res) => {
 
 module.exports = {
     getAllTasks,
-    //getByIdTask,
+    getByIdTask,
     createTask,
     updateTask,
     deleteTask,

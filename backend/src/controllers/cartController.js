@@ -1,7 +1,6 @@
 const { Cart } = require("../models/cartModel");
 const { Food } = require("../models/foodModel");
 const { User } = require("../models/userModel");
-
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
@@ -14,11 +13,11 @@ const createCart = async (req, res) => {
     //console.log(user)
 
     if (!food) {
-      errorResponse(res,httpStatusCodes.NOT_FOUND,error, "Food not found" );
+      errorResponse(res,httpStatusCodes.NOT_FOUND,'error', "Food not found" );
     }
 
     if (!user) {
-       errorResponse(res,httpStatusCodes.NOT_FOUND,error,"User not found" );
+       errorResponse(res,httpStatusCodes.NOT_FOUND,'error',"User not found" );
     }
 
     let cart = await Cart.findOne({ buyer: user._id, foods: food._id });
@@ -41,10 +40,10 @@ const createCart = async (req, res) => {
       );
     }
  
-    successResponse(res, httpStatusCode.SUCCESS, success, "Food added to cart" , cart);
+    successResponse(res, httpStatusCode.SUCCESS, 'success', "Food added to cart" , cart);
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
+     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
@@ -53,12 +52,12 @@ const getAllCart = async (req, res) => {
     const cart = await Cart.find();
 
     if (!cart) {
-      errorResponse(res, httpStatusCode.NOT_FOUND,error, "Cart not found" );
+      errorResponse(res, httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     }
     res.json(cart);
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
+     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
@@ -69,7 +68,7 @@ const getByIdCart = async (req, res) => {
       .populate("buyer");
     //console.log(cart)
     if (!cart) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,error, "Cart not found" );
+      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     }
     //res.json(cart);
     successResponse(
@@ -85,7 +84,7 @@ const getByIdCart = async (req, res) => {
     
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
+     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
@@ -99,11 +98,11 @@ const updateCart = async (req, res) => {
     //console.log(user)
 
     if (!food) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,error, "Food not found" );
+      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" );
     }
 
     if (!user) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,error, "User not found" );
+      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "User not found" );
     }
 
     let carts = await Cart.findOne({ buyer: user._id, foods: food._id });
@@ -126,10 +125,10 @@ const updateCart = async (req, res) => {
       );
     }
 
-    successResponse(res,httpStatusCode.SUCCESS, success, "Food added to cart", carts );
+    successResponse(res,httpStatusCode.SUCCESS, 'success', "Food added to cart", carts );
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
+     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
@@ -138,12 +137,12 @@ const deleteCart = async (req, res) => {
     const cart = await Cart.findByIdAndDelete(req.params.id);
 
     if (!cart) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,error, "Cart not found" );
+      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     }
-    successResponse(res,httpStatusCode.SUCCESS, success, "Cart deleted successfully" );
+    successResponse(res,httpStatusCode.SUCCESS, 'success', "Cart deleted successfully" );
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Server Error');
+     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 

@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
         type: Array,
     },
     phone: {
-        type: Number,
+        type: String,
         required: [true, 'Phone number is required']
     },
     usertype : {
@@ -58,7 +58,7 @@ userSchema.pre("save", function(next) {
 
 userSchema.post("save", function(doc, next) {
     const information = `this new user data name$ {doc.name} and userType ${doc.usertype}`
-    const text = fs.writeFileSync('../text.txt', information, utf-8, (err) => {
+    const text = fs.writeFileSync('../text.txt', information, 'utf-8', (err) => {
         if (err) {
             console.log(err)
         }

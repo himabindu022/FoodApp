@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const restaurantSchema = mongoose.Schema ({
     title : {
         type : String,
+        min: 18,
+        max:30,
         required : [true, "title is required"]
     },
     imageUrl : {
