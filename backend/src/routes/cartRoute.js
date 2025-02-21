@@ -5,7 +5,7 @@ const { createCart, getAllCart, getByIdCart, updateCart, deleteCart } = require(
 route.post('/', createCart)
 route.get('/:id', getByIdCart)
 route.get('/', getAllCart)
-route.patch('/:id', updateCart)
+//route.patch('/:id', updateCart)
 route.delete('/:id', deleteCart)
 
 module.exports = route

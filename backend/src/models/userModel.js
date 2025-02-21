@@ -35,11 +35,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Phone number is required']
     },
-    usertype : {
+    role : {
         type : String,
         required : [true, 'User type is required'],
         default: 'client',
-        enum : ['client', 'admin', 'vendor', 'driver']
+        enum : ['client', 'admin', 'vendor', 'user', 'moderator', 'editor','viewer']
     },
 })
 

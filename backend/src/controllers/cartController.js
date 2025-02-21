@@ -88,49 +88,49 @@ const getByIdCart = async (req, res) => {
   }
 };
 
-const updateCart = async (req, res) => {
-  try {
-    const cart = await Cart.findByIdAndUpdate(req.params.id)
+// const updateCart = async (req, res) => {
+//   try {
+//     const cart = await Cart.findByIdAndUpdate(req.params.id)
 
-    const food = await Food.findOne({ _id: req.body.foodId });
-    //console.log(food)
-    const user = await User.findOne({ _id: req.body.userId });
-    //console.log(user)
+//     const food = await Food.findOne({ _id: req.body.foodId });
+//     //console.log(food)
+//     const user = await User.findOne({ _id: req.body.userId });
+//     //console.log(user)
 
-    if (!food) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" );
-    }
+//     if (!food) {
+//       errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" );
+//     }
 
-    if (!user) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "User not found" );
-    }
+//     if (!user) {
+//       errorResponse(res,httpStatusCode.NOT_FOUND,'error', "User not found" );
+//     }
 
-    let carts = await Cart.findOne({ buyer: user._id, foods: food._id });
-    //console.log(cart)
-    if (!carts) {
-      carts = new Cart({
-        buyer: user._id,
-        foods: food._id,
-        quantity: 1,
-      });
-    } else {
-      const { _id, foods, buyer, quantity } = carts;
-      await Cart.findOneAndUpdate(
-        { _id },
-        {
-          foods: foods,
-          buyer: buyer,
-          quantity: quantity + 1,
-        }
-      );
-    }
+//     let carts = await Cart.findOne({ buyer: user._id, foods: food._id });
+//     //console.log(cart)
+//     if (!carts) {
+//       carts = new Cart({
+//         buyer: user._id,
+//         foods: food._id,
+//         quantity: 1,
+//       });
+//     } else {
+//       const { _id, foods, buyer, quantity } = carts;
+//       await Cart.findOneAndUpdate(
+//         { _id },
+//         {
+//           foods: foods,
+//           buyer: buyer,
+//           quantity: quantity + 1,
+//         }
+//       );
+//     }
 
-    successResponse(res,httpStatusCode.SUCCESS, 'success', "Food added to cart", carts );
-  } catch (error) {
-    console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
-  }
-};
+//     successResponse(res,httpStatusCode.SUCCESS, 'success', "Food added to cart", carts );
+//   } catch (error) {
+//     console.log(error);
+//      errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
+//   }
+// };
 
 const deleteCart = async (req, res) => {
   try {
@@ -150,6 +150,6 @@ module.exports = {
   createCart,
   getAllCart,
   getByIdCart,
-  updateCart,
+  //updateCart,
   deleteCart,
 };

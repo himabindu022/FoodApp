@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const orderSummarySchema = mongoose.Schema({
-    orderId: { 
+    order: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref : 'Order'
     },

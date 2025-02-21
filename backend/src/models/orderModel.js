@@ -8,13 +8,17 @@ const OrderSchema = mongoose.Schema ({
     payment : {
         type : Number,
     },
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cart'
+    },
     buyer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
     status: {
         type: String,
-        enum:['preparing','prepare', 'on the way', 'delivered'],
+        enum:['preparing','prepared', 'on the way', 'reached','delivered', 'cancelled'],
         default: 'Preparing'
     },
     },

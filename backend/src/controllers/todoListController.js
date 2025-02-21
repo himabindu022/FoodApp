@@ -21,19 +21,16 @@ const getAllTasks = async (req, res) => {
 const getByIdTask = async (req, res) => {
     try {
         const todo = await Todo.findById(req.params.id)
-<<<<<<< HEAD
 
         if(!todo) {
             return res.status(404).json({ message: 'Task not found' })
         }
         res.status(200).json({message: 'Successfully received data',Data:todo})
-=======
         
         if(!todo) {
             return res.status(404).json({ message: 'Task not found' })
         }
         res.status(200).json({message: 'Successfully received data',data:todo})
->>>>>>> 9fe52d8dc3a23eff48c2c2d2edd9036de583751e
     } catch (error) {
         console.log(error)
     }
@@ -42,19 +39,17 @@ const getByIdTask = async (req, res) => {
 const createTask = async (req, res) => {
     try {
         const { title, description, status, dueDate} = req.body
-<<<<<<< HEAD
+
         //console.log(req.body)
         // if(!title ||!description ||!status ||!dueDate ||!createdAt) {
         //     return res.status(404).json({ message: 'Fill the all the fields' })
         // }
 
-=======
         console.log(req.body)
         if(!title ||!description ||!status ||!dueDate) {
             return res.status(404).json({ message: 'Fill the all the fields' })
         }
         
->>>>>>> 9fe52d8dc3a23eff48c2c2d2edd9036de583751e
         const newData = new Todo({
             title, 
             description, 

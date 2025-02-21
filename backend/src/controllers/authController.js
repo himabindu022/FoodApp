@@ -11,14 +11,14 @@ dotenv.config()
 // Register controller
 const registerController = async (req, res) => {
     try {
-        const { username, email, password, phone, address } = req.body;
+        const { username, email, password, phone, address, role } = req.body;
         //console.log(req.body)
 
-        if (!username || !email || !password || !phone || !address) {
+        if (!username || !email || !password || !phone || !address ||!role) {
             errorResponse(res, httpStatusCode.BAD_REQUEST, 'bad_request' , 'Please provide all the fields');
         }
 
-        const user = await User.findOne({email});
+        const user = await User.find({email:email});
 
         if (user) {
             errorResponse(res, httpStatusCode.BAD_REQUEST ,'bad_request' ,'Email already taken');

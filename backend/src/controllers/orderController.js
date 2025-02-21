@@ -1,21 +1,28 @@
 const { Order } = require('../models/orderModel')
-
+const { Cart } = require('../models/cartModel.js')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const createOrder = async(req, res) => {
     try {
-        const { food, payment, buyer, status} = req.body
+        const { cart, food, payment, buyer, status} = req.body
+        const cartdata = await Cart.findOne({userId: req.body.buyer})
 
-        if(!food ||!payment ||!buyer ||!status) {
+        if(!food ||!payment ||!buyer ||!status ||!cart) {
             return res.status(400).json({ message: "Please fill in all fields" })
         }
+
+        if(!cartdata){
+            res.json({message:'no data found in cart'})
+        }
+
         const order = new Order({
           food,
           payment,
           buyer,
-          status
+          status,
+          cart
         })
         await order.save()
         return res.status(200).json({message:'created successfully',  order })
