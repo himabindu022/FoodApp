@@ -34,23 +34,22 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: [true, 'Phone number is required']
+        // required: [true, 'Phone number is required']
     },
     role : {
         type : String,
-        required : [true, 'User type is required'],
+        // required : [true, 'User type is required'],
         default: 'client',
         enum : ['client', 'admin', 'vendor', 'user', 'moderator', 'editor','viewer']
     },
 })
 
 
-userSchema.pre("save", function(next) {
+userSchema.pre("save", async function(next) {
      if (!this.isModified('password'))
-        return next()
-
+        next()
         try {
-            this.password = bcrypt.hash(this.password, 10)
+            this.password = await bcrypt.hash(this.password, 10)
             next()
         } catch (error) {
             console.log(error)
@@ -58,8 +57,8 @@ userSchema.pre("save", function(next) {
     })
 
 userSchema.post("save", function(doc, next) {
-    const information = `this new user data name$ {doc.name} and userType ${doc.usertype}`
-    const text = fs.writeFileSync('../text.txt', information, 'utf-8', (err) => {
+    const information = `this new user data name ${doc.name} and userType ${doc.usertype}`
+    const text = fs.writeFile ('../text.txt', information, 'utf-8', (err) => {
         if (err) {
             console.log(err)
         }
