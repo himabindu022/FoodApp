@@ -3,6 +3,10 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const dotenv = require('dotenv')
+const passport = require('passport')
+const flash = require('connect-flash');
+//const localStrategy  = require('passport-local').Strategy
+const session = require('express-session')
 const bodyparser = require('body-parser')
 const connectDB = require('./config/db.js')
 const authRoute = require('./src/routes/authRoute.js')
@@ -15,6 +19,10 @@ const orderRoute = require('./src/routes/orderRoute.js')
 const deliveryRoute = require('./src/routes/deliveryRoute.js')
 const cartRoute = require('./src/routes/cartRoute.js')
 const todoRoute = require("./src/routes/todoListRoute.js")
+const limits = require('./src/middleware/express-rate-limiter')
+
+//mongoDB session storage
+const MongoStore = require('connect-mongo')
 
 //dotenv configuration
 dotenv.config()
@@ -24,6 +32,9 @@ const app = express()
 
 //validate middleware
 app.use(errorMiddleware)
+
+//Express rate limit middleware
+app.use('/api/', limits)
 
 //Middlewares
 app.use(express.json())
@@ -35,6 +46,24 @@ app.use(express.urlencoded({ extended: true })); // For parsing application/x-ww
 //parse incoming JSON requests
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
+
+
+//middleware session
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false,
+    store:MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/session",}),
+    cookie: {
+        maxAge: 1000* 60*60*24
+    }
+}))
+
+//initial passport and passport-local
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use(flash())
 
 //route
 //URL:http://localhost:3000
@@ -62,7 +91,6 @@ const PORT = process.env.PORT || 8080 ;
 app.listen(PORT,() => {
     console.log(`Server is running on port ${PORT}`.bgCyan)
 })
-
 
 //DB Connection
 connectDB()

@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const bcrypt = require("bcrypt")
 const jwt  = require('jsonwebtoken')
 const { User } = require('../models/userModel.js'); 
@@ -11,37 +10,17 @@ dotenv.config()
 // Register controller
 const registerController = async (req, res) => {
     try {
-        const { username, email, password, phone, address, role } = req.body;
-        //console.log(req.body)
-
-        if (!username || !email || !password || !phone || !address ||!role) {
-            errorResponse(res, httpStatusCode.BAD_REQUEST, 'bad_request' , 'Please provide all the fields');
-        }
-
-        const user = await User.find({email:email});
-
-        if (user) {
-            errorResponse(res, httpStatusCode.BAD_REQUEST ,'bad_request' ,'Email already taken');
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10)
-
-        const newUser = new User({
-            username,
-            email,
-            password:hashedPassword,
-            phone,
-            address
-        });
-        await newUser.save();
-
-        successResponse(res,httpStatusCode.CREATED, 'created', 'User created successfully', newUser );
-
+        console.log('Request received:', req.body);
+        const newuser = await User.create(req.body);
+        console.log('User created:', newuser);
+        successResponse(res, httpStatusCode.CREATED, "success", "User created successfully", newuser);
     } catch (error) {
-        console.error(error); 
-        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', "server error");
+        console.error('Error creating user:', error);
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, "error", "Internal server error");
     }
 };
+
+       
 
 //login
 
