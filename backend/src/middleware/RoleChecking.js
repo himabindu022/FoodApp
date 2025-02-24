@@ -1,46 +1,52 @@
 const roles = {
     admin: {
-        can: ['create','edit', 'delete', 'view']
+        permissions: ['create','edit', 'delete', 'view']
     },
     moderator: {
-        can: ['edit', 'delete', 'view']
+        permissions: ['edit', 'delete', 'view']
     },
     user: {
-        can: ['view']
+        permissions: ['view']
     },
     guest: {
-        can: ['view']
+        permissions: ['view']
     },
     editor: {
-        can: ['create', 'edit', 'view']
+        permissions: ['create', 'edit', 'view']
     },
     contributor: {
-        can: ['create', 'view']
+        permissions: ['create', 'view']
     },
     support: {
-        can: ['view']
+        permissions: ['view']
     },
     manager: {
-        can: ['create', 'edit', 'delete', 'view']
+        permissions: ['create', 'edit', 'delete', 'view']
     },
     Vendor: {
-        can: ['create', 'edit', 'view']
+        permissions: ['create', 'edit', 'view']
     },
     superAdmin: {
-        can: ['create', 'edit', 'delete', 'view','admin']
+        permissions: ['create', 'edit', 'delete', 'view','admin']
     }
 }
 
 const isAuthorized = (role,action) => (req, res, next) =>{
     try {
 
-        const userRole = req.body.role
-        const permission = roles[userRole].can
+        const userRole =  req.body.role 
 
-        if (permission.include(action)) {
+        // if (!roles[userRole]) {
+        //     return res.status(400).json({ message: 'Invalid role' });
+        // }
+        
+        const Permissions = roles[userRole].permissions
+
+        if (role.includes(userRole) && Permissions.includes(action)) {
             next()
+        } else {
+            res.status(403).json({ message: 'Access denied' })
         }
-        res.status(403).json({ message: 'Access denied' });
     } catch (error) {
         console.log(error)
     }

@@ -45,29 +45,30 @@ const userSchema = new mongoose.Schema({
 })
 
 
-userSchema.pre("save", function(next) {
-     if (!this.isModified('password'))
-        return next()
+// userSchema.pre("save", async function(next) {
+//      if (!this.isModified('password'))
+//         return next()
 
-        try {
-            this.password = bcrypt.hash(this.password, 10)
-            next()
-        } catch (error) {
-            console.log(error)
-        }
-    })
+//         try {
+//             this.password = await bcrypt.hash(this.password, 10)
+//             next()
+//         } catch (error) {
+//             console.log(error)
+//         }
+//     })
 
-userSchema.post("save", function(doc, next) {
-    const information = `this new user data name$ {doc.name} and userType ${doc.usertype}`
-    const text = fs.writeFileSync('../text.txt', information, 'utf-8', (err) => {
-        if (err) {
-            console.log(err)
-        }
-         console.log(text)
-         next()
-    })
+// userSchema.post("save", function(doc, next) {
+//     const information = `this new user data name ${doc.name} and userType ${doc.usertype}`
+//     fs.writeFile('../text.txt', information, 'utf-8', (err) => {
+//         if (err) {
+//             console.log(err)
+//             next(err)
+//         }
+//          console.log(text)
+//          next()
+//     })
 
-})
+// })
 
 const User = mongoose.model('User', userSchema)
 

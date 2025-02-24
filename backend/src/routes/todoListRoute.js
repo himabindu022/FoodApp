@@ -6,8 +6,9 @@ const {getAllTasks, getByIdTask, createTask, deleteTask, updateTask, completedTa
 const  todoValidation  = require('../validations/todoListValidation')
 const validate = require('../middleware/validate')
 const successResponse = require('../utils/successResponse.js')
+const rbacroles = require('../middleware/RoleChecking.js')
 
-route.get('/', getAllTasks)
+route.get('/', rbacroles('view'),getAllTasks)
 route.get('/completed', completedTasks)
 route.get('/:id', getByIdTask)
 

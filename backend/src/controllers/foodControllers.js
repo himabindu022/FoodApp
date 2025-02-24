@@ -14,9 +14,9 @@ const getAllFood = async(req, res, next) => {
             errorResponse(res,httpStatusCode.NOT_FOUND,error, "No foods found" )
         }
         console.log(foods)
-        successResponse(res,httpStatusCode.CREATED, success,'received all food data',foods )
+        successResponse(res,httpStatusCode.CREATED, 'success','received all food data',foods )
     } catch (error) {
-        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR,error, "Internal server error")
+        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR,'error', "Internal server error")
         next(error)
 
     }
