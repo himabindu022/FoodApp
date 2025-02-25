@@ -40,13 +40,11 @@ app.use('/api/', limits)
 app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 
-//parse incoming JSON requests
-app.use(bodyparser.json())
-app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
-
+// app.use(express.json()); // For parsing application/json
+// app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+// app.use(bodyparser.json())  //parse incoming JSON requests
+// app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
 
 //middleware session
 app.use(session({
@@ -79,7 +77,7 @@ app.use('/api/v1/delivery', deliveryRoute)
 app.use('/api/v1/cart', cartRoute)
 
 
-//Default Route
+//Default Route for all 
 //app.all('*', (req, res, next) =>{
  //   res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
 //})

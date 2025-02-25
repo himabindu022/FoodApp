@@ -10,27 +10,13 @@ const createRestaurant = async(req, res, next) => {
         const {title, foods, time, pickup, delivery, isOpen, logoUrl, rating, ratingCount, code, imageUrl} = req.body;
          console.log(req.body)
        if(!title ||!foods ||!time ||!pickup ||!delivery ||!isOpen ||!rating ||!ratingCount ||!code ||!imageUrl ||!logoUrl) {
-              return res.status(400).json({message: 'Please fill in all fields.'});
+              errorResponse(res, httpStatusCode.NOT_FOUND , 'error','Please fill in all fields.');
        }
 
        const newRestaurant = await Restaurant.create(req.body)
        console.log(newRestaurant)
-    //    const newRestaurant = new Restaurant ({
-    //     title,
-    //     imageUrl,
-    //     food,
-    //     time,
-    //     pickup,
-    //     delivery,
-    //     isOpen,
-    //     rating,
-    //     ratingCount,
-    //     code,
-    //     logoUrl
-    //    })
-    //   await newRestaurant.save
-    //   console.log(newRestaurant)
-        return res.status(200).json({message:'Restaurant created successfully', newRestaurant})
+
+        successResponse(res, httpStatusCode.CREATED , 'success','Restaurant created successfully', newRestaurant)
     } catch (error) {
         next(error)
     }
@@ -50,11 +36,12 @@ const getByIdRestaurant = async(req, res) => {
     try {
         const getRestaurant = await Restaurant.findOne({_id:req.params.id}).populate('foods').populate('order').populate('buyer')
         if(!getRestaurant) {
-            return res.status(400).json({message:'No data found'})
+           errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-        return res.status(200).json({message:"received all the data of Restaurants", getRestaurant})
+        successResponse(res, httpStatusCode.CREATED , 'success',"received all the data of Restaurants", getRestaurant)
     } catch (error) {
         console.log(error)
+
     }
 }
 
@@ -63,12 +50,12 @@ const updateRestaurant  = async(req, res, next) => {
         const update = await Restaurant.findById(req.params.id)
 
         if(!update) {
-            return res.status(400).json({message:'No data found'})
+            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
 
         const updateRestaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {new: true})
         await updateRestaurant.save()
-        return res.status(200).json({message:'Updated successfully', updateRestaurant})
+        successResponse(res, httpStatusCode.CREATED , 'success','Updated successfully', updateRestaurant)
     } catch (error) {
         next(error)
     }
@@ -79,9 +66,9 @@ const deleteRestaurant = async(req,res) => {
         const deleteRestaurant = await Restaurant.findByIdAndDelete(req.params.id)
 
         if(! deleteRestaurant) {
-            return res.status(400).json({message:'No data found'})
+            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-        return res.status(200).json({message:"Deleted Restaurant", deleteRestaurant})
+        successResponse(res, httpStatusCode.CREATED , 'success',"Deleted Restaurant", deleteRestaurant)
 
     } catch (error) {
         console.log(error)

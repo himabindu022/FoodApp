@@ -1,10 +1,8 @@
 const { Food } = require('../models/foodModel') 
 const mongoose = require('mongoose')
-
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
-
 
 const getAllFood = async(req, res, next) => {
     try {
@@ -55,7 +53,7 @@ const createFood = async(req, res, next) => {
             restaurant
         })
         await createFood.save()
-        return res.status(201).json({message:'created successfully', Food :createFood})
+        successResponse(res, httpStatusCode.CREATED,'success','created successfully', createFood)
     } catch (error) {
         errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
         next(error)
@@ -68,7 +66,7 @@ const updateFood = async(req, res) => {
         const food = await Food.findById(req.params.id)
      
         if(!food) {
-            return res.status(404).json({ message: "Food not found" })
+            errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" )
         }
         const updateFood = {
             title : title ?? food.title,
@@ -80,10 +78,25 @@ const updateFood = async(req, res) => {
             rating : rating ?? food.rating,
             restaurant : restaurant ?? food.restaurant
         }
-        await Food.findByIdAndUpdate({_id:req.params.id}, updateFood, {new: true})
+        const updatedFood = await Food.findByIdAndUpdate({_id:req.params.id}, updateFood, {new: true})
+        successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', updatedFood)
     } catch (error) {
         console.log(error)
         errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
+    }
+}
+
+const deleteFood = async(req, res) => {
+    try {
+        const food = await Food.findById(req.params.id)
+
+        if(!food) {
+            errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" )
+        }
+        const deleted = await Food.findByIdAndUpdate(req.params.id)
+        successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', deleted)
+    } catch (error) {
+        console.log(error)
     }
 }
 
@@ -129,7 +142,9 @@ const foodAggre = async (req, res) => {
 
 module.exports = {
     getAllFood,
+    getFood,
     createFood,
     updateFood,
+    deleteFood,
     foodAggre
 }

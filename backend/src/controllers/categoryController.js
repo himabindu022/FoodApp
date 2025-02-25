@@ -1,5 +1,4 @@
 const { Category } = require('../models/categoryModel')
-
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
@@ -10,12 +9,6 @@ const createCategory = async(req, res) => {
         const imageUrl = req.file ? `${req.file.filename}` : null
         console.log(imageUrl)
         console.log(req.file)
-
-       // if(!title) {
-       //     return res.status(400).json({message:'fill the field'})
-       // }
-        //const image = req.File ? '/uploads/'+ req.file.fileName : null
-        //console.log(image)
 
         const category = new Category({
             title,
@@ -63,9 +56,6 @@ const updateCategory = async(req, res) => {
     try {
         const { title } = req.body
         const category = await Category.findOne({_id:req.params.id})
-
-        //const { title } = req.body
-        //console.log(req.file)
 
         if(!category) {
             errorResponse(res,httpStatusCode.NOT_FOUND,error,'no data found')

@@ -1,5 +1,4 @@
 const { Delivery } = require('../models/deliveryModel.js')
-
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
@@ -27,7 +26,7 @@ const updateDelivery = async(req, res) => {
         const delivery = await Delivery.find({id})
 
         if(!delivery) {
-            return res.status(404).json({message: 'Delivery not found.'})
+            errorResponse(res, httpStatusCode.NOT_FOUND,'error', 'Delivery not found.')
         }
     
         delivery.name = name ?? delivery.name,

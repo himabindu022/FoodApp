@@ -1,33 +1,31 @@
 const { Order } = require('../models/orderModel')
 const { Cart } = require('../models/cartModel.js')
+const { User } = require('../models/userModel.js')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const createOrder = async(req, res) => {
     try {
-        const { cart, food, payment, buyer, status} = req.body
-        const cartdata = await Cart.findOne({userId: req.body.buyer})
-
-        if(!food ||!payment ||!buyer ||!status ||!cart) {
-            return res.status(400).json({ message: "Please fill in all fields" })
-        }
-
-        if(!cartdata){
-            res.json({message:'no data found in cart'})
+        const { buyer } = req.body
+        console.log(req.body)
+        const cart = await Cart.findOne({buyer: req.body.buyer})
+        console.log(cart)
+        if(!cart){
+            errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Cart not found')
         }
 
         const order = new Order({
-          food,
-          payment,
-          buyer,
-          status,
-          cart
-        })
-        await order.save()
-        return res.status(200).json({message:'created successfully',  order })
+            buyer,
+            user: buyer,
+            foods: cart.foods,
+            totalPrice: cart.totalPrice
+        });
+        await order.save();
+        successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', order)
     } catch (error) {
         console.log(error);
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
@@ -36,11 +34,12 @@ const getAllOrders = async(req, res) => {
         const order = await Order.find()
 
         if(!order) {
-            return res.status(404).json({ message: "No orders found" })
+            errorResponse(res, httpStatusCode.NOT_FOUND, 'error', "No orders found",)
         }
-        return res.status(200).json({ order })
+        successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', order)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
@@ -49,12 +48,13 @@ const getByIdOrder = async(req, res) => {
         const order = await Order.findById(req.params.id).populate('food').populate('buyer')
 
         if(!order) {
-            return res.status(404).json({ message: "No data found" })
+            errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found" )
         }
-        return res.status(200).json({ message: "order found", order:order })
+        successResponse(res, httpStatusCode.CREATED, 'success', "order found", order )
 
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
@@ -64,7 +64,7 @@ const updateOrder = async(req, res) => {
         const order = await Order.findByIdAndUpdate(req.params.id)
 
         if(!order) {
-            return res.status(404).json({ message: "No data found" })
+            errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found" )
         }
         order.food = food ?? order.food,
         order.payment = payment ?? order.payment,
@@ -72,9 +72,10 @@ const updateOrder = async(req, res) => {
         order.status = status ?? order.status
 
         const updateOrder = await Order.findByIdAndUpdate(req.params.id, order, {new:true})
-        return res.status(200).json({ message: "Order updated successfully", updateOrder })
+        successResponse(res, httpStatusCode.CREATED, 'success', "Order updated successfully", updateOrder )
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
@@ -83,11 +84,12 @@ const deleteOrder = async(req,res) => {
         const order = await Order.findById(req.params.id)
 
         if(!order) {
-            return res.status(404).json({ message: "No data found" })
+            errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found" )
         }
-        return res.status(200).json({message:'deleted Successfully', order:order})
+        successResponse(res, httpStatusCode.CREATED, 'success','deleted Successfully', order)
     } catch (error) {
         console.log(error)
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 

@@ -7,7 +7,7 @@ const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const createCart = async (req, res) => {
   try {
-    const { foods, buyer} = req.body;
+    const { foods, buyer, quantity, totalPrice } = req.body;
     
         if (!buyer || !foods) {
           return res.status(400).send("Buyer or food ID is missing.");
@@ -19,11 +19,11 @@ const createCart = async (req, res) => {
         console.log(user)
         console.log(food)
 
-        let price = food.price
-        console.log(price)
-        let quantity = 1;
-        let foodName = food.title
-        console.log(foodName)
+        // let price = food.price
+        // console.log(price)
+        // let quantity = 1;
+        // let foodName = food.title
+        // console.log(foodName)
     
         if (!user) {
           return res.status(404).send("User not found");
@@ -36,46 +36,34 @@ const createCart = async (req, res) => {
         let cart = await Cart.findOne({ buyer: buyer});
   
     if(cart) {
-      const foodItems = cart.foods.find((items) =>  items && items.food && items.food._id.toString() === food._id.toString())
+      const foodItems = cart.foods.findIndex((items) =>  items && items.food && items.food._id.toString() === food._id.toString())
 
-      if(foodItems >1) {
-        foodItems.quantity +=1
+      let foodData 
 
-        TotalPrice =  cart.foods.reduce((accu, item) => {
-          
-        const quantity = parseInt(item.quantity)
-        const price = parseInt(item.foodName)
-
-        accu + quantity * price ,0})
-        totalCount = foods.length
+      if(foodItems >-1) {
+        foodData = cart.foods[foodItems]
+        foodData.quantity += quantity
+        cart.foods[foodItems] = foodData
+        cart.foods.totalPrice = cart.foods.reduce((tot,items) => tot+items.quantity* items.totalPrice,0)
         await cart.save()
-        return successResponse(res, 'Food added to cart', httpStatusCode.OK, cart, totalCount)
+        //return successResponse(res, 'Food added to cart', httpStatusCode.OK, cart, totalCount)
 
     } else {
-      cart.foods.push(food._id)
-      quantity += 1,
-      cart.totalAmount = cart.foods.reduce((accu, item) => {
-        
-        const quantity = parseInt(item.quantity)
-        const price = parseInt(item.foodName)
-
-        accu + quantity * price, 0}); 
-        totalCount = cart.foods.length
-      await cart.save()
-      return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', cart, totalCount)
-    }} else {
+      cart.foods.push({foods, totalPrice, quantity})
+      cart.foods.quantity += quantity
+      cart.totalPrice = cart.foods.reduce((tot,items) => tot+items.quantity* items.totalPrice,0) 
+    }
+    await cart.save()
+    return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', cart)
+  } else {
       const newCart = new Cart({
         buyer: buyer,
-        foods: {
-        food:food._id,
-        quantity: 1,
-        price: price,
-        },
-        totalAmount: price
+        foods: [{ foods, quantity, totalPrice }]
+        //totalAmount: food.price
       });
-      //totalCount = cart.food.length
+      //totalCount = cart.foods.length
       await newCart.save();
-      return res.status(201).send(newCart);
+      return res.status(201).send(newCart, totalPrice);
     }
   } catch (error) {
     console.log(error)
@@ -119,9 +107,9 @@ const getByIdCart = async (req, res) => {
 //     const cart = await Cart.findByIdAndUpdate(req.params.id)
 
 //     const food = await Food.findOne({ _id: req.body.foodId });
-//     //console.log(food)
+     //console.log(food)
 //     const user = await User.findOne({ _id: req.body.userId });
-//     //console.log(user)
+    //console.log(user)
 
 //     if (!food) {
 //       errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" );
@@ -132,7 +120,7 @@ const getByIdCart = async (req, res) => {
 //     }
 
 //     let carts = await Cart.findOne({ buyer: user._id, foods: food._id });
-//     //console.log(cart)
+     //console.log(cart)
 //     if (!carts) {
 //       carts = new Cart({
 //         buyer: user._id,
@@ -168,15 +156,17 @@ const removeItemFromCart = async (req, res) => {
     } else {
       const { foods } = req.body
 
-      const existing = cart.foods.findIndex((item) => {
-        item.foods === foods })
-        if (cart.foods.length === 0) {
+      const existing = cart.foods.filter((item) => {
+        item.foods !== foods })
+        if (existing.length === cart.foods.length) {
           errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart is empty" );
-        } else {
-        cart.foods.splice(existing, 1);
-        await cart.save();
-        }
-      successResponse(res,httpStatusCode.SUCCESS, 'success', "Item removed from cart", cart );
+        } 
+
+        cart.foods = existing
+        //cart.totalPrice = existing.reduce((tot, item) => tot + item.quantity * item.price, 0);
+        //const updatedCart = await Cart.findByIdAndUpdate(req.params.id, existing,{ new: true})
+        await cart.save()
+        successResponse(res,httpStatusCode.SUCCESS, 'success', "Item removed from cart", cart);
     }
 
     //successResponse(res,httpStatusCode.SUCCESS, 'success', "Cart deleted successfully" );

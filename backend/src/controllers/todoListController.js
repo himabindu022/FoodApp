@@ -40,11 +40,6 @@ const createTask = async (req, res) => {
     try {
         const { title, description, status, dueDate} = req.body
 
-        //console.log(req.body)
-        // if(!title ||!description ||!status ||!dueDate ||!createdAt) {
-        //     return res.status(404).json({ message: 'Fill the all the fields' })
-        // }
-
         console.log(req.body)
         if(!title ||!description ||!status ||!dueDate) {
             return res.status(404).json({ message: 'Fill the all the fields' })
@@ -67,18 +62,7 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
     try {
         const { title, description, status, dueDate} = req.body
-        // const todo = await Todo.findById(req.params.id)
-        // console.log(todo)
-        // if(!todo){
-        //     return res.status(404).json({ message: 'Task not found' })
-        // }
         
-        // todo.title =  title  ?? todo.title,
-        // todo.description = description ?? todo.description,
-        // todo.status = status ?? todo.status,
-        // todo.dueDate = dueDate ?? todo.dueDate
-        // await todo.save()
-        // console.log(todo)
         const newTodo = await Todo.findOneAndUpdate({_id: req.params.id}, req.body, {new:true})
         if(!newTodo) {
             return res.status(404).json({ message: 'Task not found' })

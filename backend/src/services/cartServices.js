@@ -1,26 +1,26 @@
-const { CartModel } = require("../models/cartModel");
+const { Cart } = require("../models/cartModel");
 
 const createCart = async(body) => {
-    return CartModel.create(body)
+    return Cart.create(body)
 }
 
 const getAllCart = async() => {
-    return CartModel.find()
+    return Cart.find()
 }
 
 
 const getCart = async(id) => {
-    return CartModel.find(id)
+    return Cart.findById(id)
 }
 
 
 const updateCart = async(id, body) => {
-    return CartModel.findOneAndUpdate(id, body,{new: true})
+    return Cart.findOneAndUpdate(id, body,{new: true})
 }
 
 
 const deleteCart = async(id) => {
-    return CartModel.findOneAndDelete(id)
+    return Cart.findOneAndDelete(id)
 }
 
 module.exports = {
