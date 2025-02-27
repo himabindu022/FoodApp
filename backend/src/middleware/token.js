@@ -11,17 +11,18 @@ const tokenGenerate = async (req, res, next) => {
         }
 
         jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
+
             if (err) {
                 return res.status(401).json({ message: 'Invalid or expired token' });
             }
 
-            const user = await User.findById(decoded._id).select('role'); 
+            //const user = await User.findById(decoded._id).select('role'); 
 
-            if (!user) {
-                return res.status(401).json({ message: 'User not found' });
-            }
+            //if (!user) {
+            //    return res.status(401).json({ message: 'User not found' });
+            //}
 
-            req.user = user;
+            req.user = decoded;
             next();
             
         });
@@ -31,4 +32,21 @@ const tokenGenerate = async (req, res, next) => {
     }
 };
 
-module.exports = { tokenGenerate }
+
+const isAuthorized = (...roles) => { 
+    return (req, res, next) => {
+        try {
+            const userRole = req.user.role;
+ 
+            if(!roles.includes(userRole))  {
+                return res.status(403).json({message: 'You are not authorized to perform this action'})
+            }
+            next()
+        } catch (error) {
+            next(error)
+        }
+    }
+}
+   
+
+module.exports = { tokenGenerate, isAuthorized }

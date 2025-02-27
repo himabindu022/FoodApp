@@ -24,9 +24,15 @@ const createRestaurant = async(req, res, next) => {
 
 const getAllRestaurant = async(req, res, next) => {
     try {
-        const features = new APIfeatures(Restaurant.find(),req.query).filter().sort().limitFields().paginate()
-        const restaurants = await features.req.query
-        return res.status(200).json({message:"received all the data of Restaurants", length:query.length, restaurants})
+        //const features = new APIfeatures(Restaurant.find(),req.query)//.filter().sort()//.limitFields().paginate()
+        //const restaurants = await features.req.query
+
+        const restaurants = await Restaurant.find({})
+
+        if(!restaurants){
+            res.json('no data found')
+        }
+        return res.status(200).json({message:"received all the data of Restaurants", restaurants})
     } catch (error) {
         next(error)
     }

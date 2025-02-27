@@ -39,8 +39,9 @@ const login = async (req,res, next) => {
             successResponse(res,httpStatusCode.NOT_FOUND, 'error','user not found')
         }
         
-        const token = jwt.sign({id: user._id}, process.env.SECRET_KEY, { expiresIn: '6d' })
-        successResponse(res,httpStatusCode.CREATED, 'success', 'Login sucessfully', user, token)
+        const token = jwt.sign({id: user._id, role: user.role}, process.env.SECRET_KEY, { expiresIn: '60d' })
+
+        successResponse(res,httpStatusCode.CREATED, 'success', 'Login sucessfully', {token: token})
 
         req.user = user;
         next()

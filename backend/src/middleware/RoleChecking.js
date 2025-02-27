@@ -30,21 +30,22 @@
 //         permissions: ['create', 'edit', 'delete', 'view','admin']
 //     }
 // }
-const { User } = require('../models/userModel')
 
-const isAuthorized = (role) => { 
-    return (req, res, next) =>{
-        try {
-            //const userRole = req.user.role;
+// const { User } = require('../models/userModel')
 
-            if(req.user.role !== role)  {
-                return res.status(403).json({message: 'You are not authorized to perform this action'})
-            }
-            next()
-        } catch (error) {
-            next(error)
-        }
-    }}
+// const isAuthorized = (role) => { 
+//     return (req, res, next) =>{
+//         try {
+//             //const userRole = req.user.role;
+
+//             if(req.user.role !== role)  {
+//                 return res.status(403).json({message: 'You are not authorized to perform this action'})
+//             }
+//             next()
+//         } catch (error) {
+//             next(error)
+//         }
+//     }}
     
 
         //const userRole =  req.user.role 
@@ -69,4 +70,4 @@ const isAuthorized = (role) => {
 
 
 
-module.exports = isAuthorized
+//module.exports = isAuthorized

@@ -2,12 +2,14 @@ const express = require('express')
 const route = express.Router()
 const passport  = require('passport')
 const { registerController, login } = require('../controllers/authController.js')
+const { tokenGenerate, isAuthorized } = require('../middleware/token.js')
 const validate = require('../middleware/validate.js')
 const userValidation = require('../validations/userValidation.js')
 const passportConfig = require('../../config/passport.js')//import passport config
 const successResponse = require('../utils/successResponse.js')
 
 route.post('/register', registerController)
+route.get('/login', login)
 
 route.post("/login", passport.authenticate("local",{
     successRedirect: '/sucess',
