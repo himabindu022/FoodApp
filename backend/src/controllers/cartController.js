@@ -7,63 +7,43 @@ const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const createCart = async (req, res) => {
   try {
-    const { foods, buyer, quantity, totalPrice } = req.body;
-    
-        if (!buyer || !foods) {
-          return res.status(400).send("Buyer or food ID is missing.");
-        }
-  
-        const user = await User.findById(buyer);  
-        const food = await Food.findById(foods); 
-        
-        console.log(user)
-        console.log(food)
+    const { foods, buyer, quantity } = req.body;    
+    if (!buyer || !foods) {
+      return res.status(400).send("Buyer or food ID is missing.");
+    }
 
-        // let price = food.price
-        // console.log(price)
-        // let quantity = 1;
-        // let foodName = food.title
-        // console.log(foodName)
-    
-        if (!user) {
-          return res.status(404).send("User not found");
-        }
-    
-        if (!food) {
-          return res.status(404).send("Food not found");
-        }
-    
-        let cart = await Cart.findOne({ buyer: buyer});
+    const user = await User.findById(buyer);  
+    const food = await Food.findById(foods); 
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    if (!food) {
+      return res.status(404).send("Food not found");
+    }
+
+    let cart = await Cart.findOne({ buyer: buyer});
   
     if(cart) {
-      const foodItems = cart.foods.findIndex((items) =>  items && items.food && items.food._id.toString() === food._id.toString())
+      const foodItemIdx = cart.foods.findIndex((item) => item.foods._id.toString() === food._id.toString())
 
-      let foodData 
-
-      if(foodItems >-1) {
-        foodData = cart.foods[foodItems]
-        foodData.quantity += quantity
-        cart.foods[foodItems] = foodData
-        cart.foods.totalPrice = cart.foods.reduce((tot,items) => tot+items.quantity* items.totalPrice,0)
-        await cart.save()
-        //return successResponse(res, 'Food added to cart', httpStatusCode.OK, cart, totalCount)
-
+      if(foodItemIdx > -1) {
+        cart.foods[foodItemIdx].quantity += quantity || 1;
+        cart.foods[foodItemIdx].totalPrice = cart.foods[foodItemIdx].quantity * food.price;
+      }
+      else {  
+        cart.foods.push({ foods, quantity : quantity || 1, totalPrice : (quantity || 1) * food.price })
+      }
+      await cart.save()
+      return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', cart)
     } else {
-      cart.foods.push({foods, totalPrice, quantity})
-      cart.foods.quantity += quantity
-      cart.totalPrice = cart.foods.reduce((tot,items) => tot+items.quantity* items.totalPrice,0) 
-    }
-    await cart.save()
-    return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', cart)
-  } else {
       const newCart = new Cart({
         buyer: buyer,
-        foods: [{ foods, quantity, totalPrice }]
-        //totalAmount: food.price
+        foods: [{ foods, quantity : quantity || 1, totalPrice : (quantity || 1) * food.price }]
       });
-      //totalCount = cart.foods.length
       await newCart.save();
-      return res.status(201).send(newCart, totalPrice);
+      return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', newCart)
     }
   } catch (error) {
     console.log(error)

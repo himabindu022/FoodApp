@@ -18,7 +18,7 @@ const cartSchema = new mongoose.Schema({
         }
     }],
 
-    totalAmount: { type: Number }
+    // totalAmount: { type: Number }
 });
 const Cart = mongoose.model('Cart', cartSchema);
 module.exports = { Cart }
