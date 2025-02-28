@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
 const OrderSchema = mongoose.Schema ({
-    foods : {
+    foods : [{
         type : mongoose.Schema.Types.ObjectId,
         ref:'Food'
-    },
+    }],
     payment : {
         type : Number,
     },
@@ -19,7 +19,7 @@ const OrderSchema = mongoose.Schema ({
     status: {
         type: String,
         enum:['preparing','prepared', 'on the way', 'reached','delivered', 'cancelled'],
-        default: 'Preparing'
+        default: 'preparing'
     },
     },
     { timestamps: true }

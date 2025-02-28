@@ -27,7 +27,7 @@ const createCart = async (req, res) => {
   
     if(cart) {
       const foodItemIdx = cart.foods.findIndex((item) => item.foods._id.toString() === food._id.toString())
-
+      console.log(foodItemIdx)
       if(foodItemIdx > -1) {
         cart.foods[foodItemIdx].quantity += quantity || 1;
         cart.foods[foodItemIdx].totalPrice = cart.foods[foodItemIdx].quantity * food.price;
@@ -128,31 +128,36 @@ const getByIdCart = async (req, res) => {
 
 const removeItemFromCart = async (req, res) => {
   try {
-
-    const cart = await Cart.findById(req.params.id);
+    const { buyer, foods } = req.body
+    const cart = await Cart.findOne({buyer: buyer})
+    const food = await Food.findOne({foods:foods})
 
     if (!cart) {
-      errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
-    } else {
-      const { foods } = req.body
+      return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
+    } 
 
-      const existing = cart.foods.filter((item) => {
-        item.foods !== foods })
-        if (existing.length === cart.foods.length) {
-          errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart is empty" );
-        } 
+      const existing = cart.foods.findIndex((item) => item.foods.id === foods.id )
+        console.log(foods.id)
 
-        cart.foods = existing
-        //cart.totalPrice = existing.reduce((tot, item) => tot + item.quantity * item.price, 0);
-        //const updatedCart = await Cart.findByIdAndUpdate(req.params.id, existing,{ new: true})
+        // if (existing === -1) {
+        //   return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
+        // }
+
+        //console.log(cart.foods[existing] ) 
+        //const cartItem = cart.foods
+        //console.log(cartItem)
+
+        if (existing > 1) {
+          cart.foods[existing].quantity  -= 1;
+          cart.foods[existing].totalPrice = cart.foods[existing].quantity * food.price;
+        } else {
+          cart.foods.splice(1);
+        }
         await cart.save()
-        successResponse(res,httpStatusCode.SUCCESS, 'success', "Item removed from cart", cart);
-    }
-
-    //successResponse(res,httpStatusCode.SUCCESS, 'success', "Cart deleted successfully" );
+        return successResponse(res,httpStatusCode.CREATED, 'success', "Item removed from cart", cart);
   } catch (error) {
     console.log(error);
-     errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
+    // errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
