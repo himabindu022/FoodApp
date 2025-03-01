@@ -71,10 +71,10 @@ const getByIdCart = async (req, res) => {
     console.log(cart)
     if (!cart) {
       // errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
-      res.json({message:"error"})
+      return res.json({message:"error"})
     }
     //res.json(cart);
-    res.json(cart)
+    return res.json(cart)
     
   } catch (error) {
     console.log(error);
@@ -128,20 +128,21 @@ const getByIdCart = async (req, res) => {
 
 const removeItemFromCart = async (req, res) => {
   try {
-    const { buyer, foods } = req.body
+    const { buyer } = req.body
     const cart = await Cart.findOne({buyer: buyer})
-    const food = await Food.findOne({foods:foods})
+    const food = req.params.id
+    console.log(food)
 
     if (!cart) {
       return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     } 
 
-      const existing = cart.foods.findIndex((item) => item.foods.id === foods.id )
-        console.log(foods.id)
+      const existing = cart.foods.findIndex((item) => item.foods.toString() === food)
+      console.log(existing)
 
-        // if (existing === -1) {
-        //   return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
-        // }
+        if (existing === -1) {
+          return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
+        }
 
         //console.log(cart.foods[existing] ) 
         //const cartItem = cart.foods
@@ -151,7 +152,7 @@ const removeItemFromCart = async (req, res) => {
           cart.foods[existing].quantity  -= 1;
           cart.foods[existing].totalPrice = cart.foods[existing].quantity * food.price;
         } else {
-          cart.foods.splice(1);
+          cart.foods.splice(existing, 1);
         }
         await cart.save()
         return successResponse(res,httpStatusCode.CREATED, 'success', "Item removed from cart", cart);

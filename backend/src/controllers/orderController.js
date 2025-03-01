@@ -6,21 +6,24 @@ const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
 
+//placeOrder
 const createOrder = async(req, res) => {
     try {
-        const { foods, buyer, cart, status } = req.body
+        const { buyer, cart, status } = req.body
         console.log(req.body)
         const carts = await Cart.findOne({buyer: req.body.buyer})
-        //console.log(carts)
+        console.log(carts)
+
         if(!carts){
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Cart not found6')
         }
 
+        //const foodIds = cart.foods.map((item) => item.foods)
         //const food = cart.foods.findIndex((item) => item.foods)
         const order = new Order({
             buyer,
-            foods: cart.foods,
-            totalPrice: cart.totalPrice,
+            cart,
+            //totalPrice: cart.totalPrice,
             status
         });
         await order.save();
@@ -47,12 +50,12 @@ const getAllOrders = async(req, res) => {
 
 const getByIdOrder = async(req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate('foods').populate('buyer')
+        const order = await Order.findById(req.params.id).populate('buyer').populate('cart')
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found4" )
         }
-        return successResponse(res, httpStatusCode.CREATED, 'success', "order found", order )
+        return successResponse(res, httpStatusCode.CREATED, 'success', "order found", order)
 
     } catch (error) {
         console.log(error)
@@ -60,6 +63,7 @@ const getByIdOrder = async(req, res) => {
     }
 }
 
+//update Order Status
 const updateOrder = async(req, res) => {
     try {
         const { food, payment, buyer, status} = req.body
@@ -68,19 +72,21 @@ const updateOrder = async(req, res) => {
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found3" )
         }
-        order.food = food ?? order.food,
-        order.payment = payment ?? order.payment,
-        order.buyer = buyer ?? order.buyer,
+        //order.food = food ?? order.food,
+        //order.payment = payment ?? order.payment,
+        //order.buyer = buyer ?? order.buyer,
         order.status = status ?? order.status
 
         const updateOrder = await Order.findByIdAndUpdate(req.params.id, order, {new:true})
-        return successResponse(res, httpStatusCode.CREATED, 'success', "Order updated successfully", updateOrder )
+        return successResponse(res, httpStatusCode.CREATED, 'success', "Order status updated successfully", updateOrder )
     } catch (error) {
         console.log(error)
         errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
+
+//cancel order
 const deleteOrder = async(req,res) => {
     try {
         const order = await Order.findById(req.params.id)
@@ -88,6 +94,8 @@ const deleteOrder = async(req,res) => {
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found2" )
         }
+        order.status = 'cancelled'
+        await order.save()    
         return successResponse(res, httpStatusCode.CREATED, 'success','deleted Successfully', order)
     } catch (error) {
         console.log(error)

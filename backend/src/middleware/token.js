@@ -34,16 +34,16 @@ const tokenGenerate = async (req, res, next) => {
 };
 
 
-const isAuthorized = (...roles) => { 
+const isAuthorized = (roles) => { 
     return (req, res, next) => {
         try {
-            const userRole = req.user;
-            console.log(userRole)
-            const data = {...roles}
-            console.log(data)
+            const { role } = req.user;
+            console.log(role)
+            //const data = {...roles}
+            //console.log(data)
             //const roleIdx = userRole.map((role) => role.role)
             //console.log(roleIdx)
-            if(!roles.includes(userRole)) {
+            if(!roles.includes(role)) {
                 return res.status(403).json({message: 'You are not authorized to perform this action'})
             }
             next()

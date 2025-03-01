@@ -5,7 +5,7 @@ const { createDelivery, getAllDelivery,getByIdDelivery, updateDelivery, deleteDe
 
 route.get('/', getAllDelivery)
 route.get('/:id', getByIdDelivery)
-route.post('/',tokenGenerate, createDelivery)
+route.post('/', createDelivery)
 route.patch('/:id',tokenGenerate, updateDelivery)
 route.delete('/:id',tokenGenerate, deleteDelivery)
 

@@ -8,13 +8,13 @@ const createDelivery = async(req, res) => {
         const {name, address, city, phone, order } = req.body
 
         if(!name||!address||!city||!phone||!order) {
-            errorResponse(res, httpStatusCode.NOT_FOUND, error, 'Please fill in all fields.')
+            errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Please fill in all fields.')
         }
         const delivery = await Delivery.create(req.body)
-        successResponse(res,httpStatusCode.CREATED, success, 'created successfully', delivery)
+        successResponse(res,httpStatusCode.CREATED, 'success', 'created successfully', delivery)
     } catch (error) {
         console.log(error)
-        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
+        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
     }
 }
 
