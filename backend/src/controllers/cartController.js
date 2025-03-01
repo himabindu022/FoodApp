@@ -130,39 +130,39 @@ const removeItemFromCart = async (req, res) => {
   try {
     const { buyer } = req.body
     const cart = await Cart.findOne({buyer: buyer})
-    const food = req.params.id
-    console.log(food)
+    const foodId = req.params.id
+    const food = await Food.findById(foodId); 
 
     if (!cart) {
       return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     } 
+    if (!food) {
+      return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" );
+    }
 
-      const existing = cart.foods.findIndex((item) => {
-        item._id.toString() == food.toString()
-        console.log(item._id.toString() == food)
-      })
-      console.log(existing)
+    const existing = cart.foods.findIndex((item) => item.foods.toString() == foodId)
+    console.log(existing)
 
 
-        if (cart.foods[existing] == -1) {
-          return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
-        }
+    if (existing == -1) {  // cart.foods[existing] replaced with existing
+      return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
+    }
 
-        console.log(cart.foods[existing] ) 
-        //const cartItem = cart.foods
-        //console.log(cartItem)
+    console.log(cart.foods[existing]) 
+    //const cartItem = cart.foods
+    //console.log(cartItem)
 
-        if (existing > 1) {
-          cart.foods[existing].quantity  -= 1;
-          cart.foods[existing].totalPrice = cart.foods[existing].quantity * food.price;
-        } else {
-          cart.foods.splice(existing, 1);
-        }
-        await cart.save()
-        return successResponse(res,httpStatusCode.CREATED, 'success', "Item removed from cart", cart);
+    if (cart.foods[existing].quantity > 1) {
+      cart.foods[existing].quantity  -= 1;
+      cart.foods[existing].totalPrice = cart.foods[existing].quantity * food.price;
+    } else {
+      cart.foods.splice(existing, 1);
+    }
+    await cart.save()
+    return successResponse(res,httpStatusCode.CREATED, 'success', "Item removed from cart", cart);
   } catch (error) {
     console.log(error);
-    // errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
+    return errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Server Error');
   }
 };
 
