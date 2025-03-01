@@ -137,14 +137,18 @@ const removeItemFromCart = async (req, res) => {
       return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
     } 
 
-      const existing = cart.foods.findIndex((item) => item.foods.toString() === food)
+      const existing = cart.foods.findIndex((item) => {
+        item._id.toString() == food.toString()
+        console.log(item._id.toString() == food)
+      })
       console.log(existing)
 
-        if (existing === -1) {
+
+        if (cart.foods[existing] == -1) {
           return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'not found');
         }
 
-        //console.log(cart.foods[existing] ) 
+        console.log(cart.foods[existing] ) 
         //const cartItem = cart.foods
         //console.log(cartItem)
 

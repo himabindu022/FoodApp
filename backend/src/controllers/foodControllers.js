@@ -103,34 +103,56 @@ const deleteFood = async(req, res) => {
 const foodAggre = async (req, res) => {
     try {
         const foodss = await Food.aggregate([
-            { 
-                $match: {                        //filter
-                    category : "veg pizza"
-                } 
-            }, 
-            {
-                $group: {                        //group
-                    _id: "$category",
-                    totalPrice: { $sum: "$price" },
-                    count: {$sum : 1 },
-                }
-            },
-            { 
-                $sort: {                       //sort
-                    totalPrice: 1
-                }
-            },   
-            {$unwind : '$restaurant'},         //decontructor the array into single document
-            {
-                $project: {                  // Project the desired fields
-                    _id: "totalprice",
-                    category: "$_id",
-                    totalPrice: 1,
-                    count: 1
-                }
-            }   
-        ]);
-        console.log(foodss)
+        {
+            $match: {
+                isAvailable: true
+            }
+        },
+        {
+            $addFields: {
+                _id: "$category",
+                name: "$title",
+                available: "$isAvailable",
+                total: "$price",
+                rating: "$rating",
+                category: "$category"
+            }
+         },
+        //  {
+        //     $lookup:{
+        //         from:"restaurant",
+        //         localField: "restaurant",
+        //         foreignField: "_id",
+        //         as:"restaurant"
+        //     }
+        //  },
+        //  {
+        //     $project:{
+        //         resturant: {
+        //             $arrayElemAt: ["$restaurant.foods", 0] 
+        //         },
+        //         _id: 0
+
+        //     }
+        //  },
+        // {
+        //     $lookup: {
+        //         from:"food",
+        //         localFields: "food",
+        //         foreignField: "_id",
+        //         as: "food"
+        //     }
+        // },
+        // {
+        //     $project: {
+        //         food:{
+        //             $arrayElemAt: ["$food", 0]
+        //         }
+        //     }
+        // }
+
+        ])
+        //console.log(foodss)
         return res.status(200).json(foodss);
     } catch (error) {
         console.log(error);
