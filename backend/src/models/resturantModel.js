@@ -10,10 +10,10 @@ const restaurantSchema = mongoose.Schema ({
     imageUrl : {
         type : String,
     },
-    foods: {
+    foods: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Food',
-    },
+    }],
     time : {
         type: String,
     },

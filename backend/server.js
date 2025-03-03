@@ -20,6 +20,7 @@ const deliveryRoute = require('./src/routes/deliveryRoute.js')
 const cartRoute = require('./src/routes/cartRoute.js')
 const todoRoute = require("./src/routes/todoListRoute.js")
 const limits = require('./src/middleware/express-rate-limiter')
+const globalErrorHandler = require('./src/utils/globalErrorhandler.js')
 
 //mongoDB session storage
 const MongoStore = require('connect-mongo')
@@ -38,12 +39,13 @@ app.use('/api/', limits)
 
 //Middlewares
 app.use(express.json())
+app.use(bodyparser.json())
 app.use(cors())
 app.use(morgan('dev'))
 
 // app.use(express.json()); // For parsing application/json
 // app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-// app.use(bodyparser.json())  //parse incoming JSON requests
+  //parse incoming JSON requests
 // app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
 
 //middleware session
@@ -62,6 +64,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use(flash())
+app.use(globalErrorHandler)
 
 //route
 //URL:http://localhost:3000
@@ -77,10 +80,10 @@ app.use('/api/v1/delivery', deliveryRoute)
 app.use('/api/v1/cart', cartRoute)
 
 
-//Default Route for all 
-//app.all('*', (req, res, next) =>{
- //   res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
-//})
+//Default Route for all (cache all routes) 
+app.all('*', (req, res, next) =>{
+   res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
+})
 
 //PORT
 const PORT = process.env.PORT || 8080 ;

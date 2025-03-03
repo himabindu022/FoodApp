@@ -10,23 +10,21 @@ const httpStatusCode = require('../constants/httpStatusCode.js')
 const createOrder = async(req, res) => {
     try {
         const { buyer, cart, status } = req.body
-        console.log(req.body)
+        //console.log(req.body)
         const carts = await Cart.findOne({buyer: req.body.buyer})
-        console.log(carts)
+        //console.log(carts)
 
         if(!carts){
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Cart not found6')
         }
 
-        //const foodIds = cart.foods.map((item) => item.foods)
-        //const food = cart.foods.findIndex((item) => item.foods)
         const order = new Order({
             buyer,
-            cart,
-            //totalPrice: cart.totalPrice,
+            cart: carts,
             status
         });
         await order.save();
+        console.log(order)
         return successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', order)
     } catch (error) {
         console.log(error);
@@ -50,7 +48,7 @@ const getAllOrders = async(req, res) => {
 
 const getByIdOrder = async(req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate('buyer').populate('cart')
+        const order = await Order.findById(req.params.id).populate('buyer').populate('cart').populate('foods')
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found4" )

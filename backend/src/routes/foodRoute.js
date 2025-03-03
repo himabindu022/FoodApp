@@ -6,10 +6,10 @@ const foodValidation = require('../validations/foodValidation.js')
 const { getAllFood, getFood, createFood, updateFood, deleteFood, foodAggre } = require('../controllers/foodControllers.js')
 
 route.get('/', getAllFood)
-//route.get('/:id', getFood)
-route.post('/', tokenGenerate,validate(foodValidation), createFood)
+route.get('/:id', getFood)
+route.post('/', createFood)
 route.patch('/:id',tokenGenerate, updateFood)
 route.delete('/:id', tokenGenerate, deleteFood)
-route.get('/aggre', foodAggre)
+//route.get('/aggre', foodAggre)
 
 module.exports = route

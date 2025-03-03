@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
 const OrderSchema = mongoose.Schema ({
-    // foods : [{
-    //     type : mongoose.Schema.Types.ObjectId,
-    //     ref:'Food'
-    // }],
+    foods : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref:'Food'
+    },
     payment : {
         type : Number,
     },
