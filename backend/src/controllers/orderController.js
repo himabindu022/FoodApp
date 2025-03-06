@@ -5,6 +5,8 @@ const { Delivery } = require('../models/deliveryModel.js')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
+const myEmitters = require("events")
+const { OrderStatus } = require('../middleware/userEmitter')
 
 //placeOrder
 const createOrder = async(req, res) => {
@@ -109,6 +111,22 @@ const trackOrder = async(req, res) => {
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found1" )
         }
+                    const task = new OrderStatus()
+                    
+                    task.on('started', () => {
+                        console.log('Task started');
+                      });
+                      
+                      task.on('progress', (progress) => {
+                        console.log(`Progress: ${progress}%`);
+                      });
+                      
+                      task.on('completed', () => {
+                        console.log('Task completed');
+                      });
+                    task.start()
+                    await task.save()
+                    console.log(task)
 
         return successResponse(res, httpStatusCode.CREATED, 'success', 'tracking the order', {
             order: order,
@@ -118,7 +136,8 @@ const trackOrder = async(req, res) => {
                     quantity: item.quantity,
                     totalPrice:item.totalPrice
                 })),
-                status: order.status
+                status: order.status,
+                orderStatus: task
         })
     } catch (error) {
         console.log(error)
@@ -132,5 +151,4 @@ module.exports = {
     updateOrder, 
     deleteOrder,
     trackOrder
-
 }

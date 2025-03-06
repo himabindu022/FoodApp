@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const dotenv = require('dotenv')
 const passport = require('passport')
 const flash = require('connect-flash');
+const myEmitters = require("events")
 //const localStrategy  = require('passport-local').Strategy
 const session = require('express-session')
 const bodyparser = require('body-parser')
@@ -85,6 +86,7 @@ app.all('*', (req, res, next) =>{
    res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
 })
 
+
 //PORT
 const PORT = process.env.PORT || 8080 ;
 
@@ -95,3 +97,5 @@ app.listen(PORT,() => {
 
 //DB Connection
 connectDB()
+
+

@@ -30,12 +30,24 @@ const getAllRestaurant = async(req, res, next) => {
         //const features = new APIfeatures(Restaurant.find(),req.query)//.filter().sort()//.limitFields().paginate()
         //const restaurants = await features.req.query
 
-        const restaurants = await Restaurant.find({})
+        const page = req.query.page || 1
+        const limit = req.query.limit || 10
+
+        const skip = (page-1) * limit
+
+        const total = await Restaurant.countDocuments()
+
+        const restaurants = await Restaurant.find().skip(skip).limit(limit)
 
         if(!restaurants){
             res.json('no data found')
         }
-        return res.status(200).json({message:"received all the data of Restaurants", restaurants})
+        return successResponse(res,httpStatusCode.CREATED,'success',"received all the data of Restaurants", {
+            page,
+            limit,
+            total,
+            restaurants
+        })
     } catch (error) {
         next(err)
     }
@@ -134,8 +146,7 @@ const restaurantgetAllOrders = async(req, res) => {
         return successResponse(res,httpStatusCode.CREATED, 'success', {
             'FoodName':food.title, 
             "FoodOrders":FoodOrders, 
-            "restaurantName": getOrderFromRestaurant
-        })
+            "restaurantName": getOrderFromRestaurant})
     } catch (error) {
         errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', "Internal Server Error1")
     }
@@ -143,9 +154,9 @@ const restaurantgetAllOrders = async(req, res) => {
 
 module.exports = {
     createRestaurant,
-    //getAllRestaurant,
+    getAllRestaurant,
     //getByIdRestaurant,
     deleteRestaurant,
     updateRestaurant,
-    restaurantgetAllOrders
+    //restaurantgetAllOrders
 }

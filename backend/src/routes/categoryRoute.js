@@ -11,7 +11,7 @@ const {
 }= require('../controllers/categoryController')
 
 route.post('/',tokenGenerate, upload.single('imageUrl'),createCategory)
-route.get('/getAll', getAllCategories)
+route.get('/getAll',tokenGenerate, getAllCategories)
 route.get('/:id', getByIdCategory)
 route.patch('/:id',tokenGenerate, upload.single('imageUrl'), updateCategory)
 route.delete('/:id',tokenGenerate, deleteCategory)
