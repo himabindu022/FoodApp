@@ -11,19 +11,15 @@ const paymentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    delivery: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Delivery',
-    },
     paymentStatus : {
         type: String,
         enum: ['pending', 'paid', 'failed'],
         required: true
+    },
+    order: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
     }
-    // orderSummary: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'OrderSummary',
-    // }
 })
 
 const Payment = mongoose.model('Payment', paymentSchema)

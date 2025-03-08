@@ -38,7 +38,7 @@ const getAllRestaurant = async(req, res, next) => {
 
         const total = await RestaurantServices.countDocuments()
 
-        const restaurants = await RestaurantServices.find().skip(skip).limit(limit)
+        const restaurants = await RestaurantServices.getRestaurants().skip(skip).limit(limit)
 
         if(!restaurants){
             res.json('no data found')
@@ -100,7 +100,7 @@ const deleteRestaurant = async(req,res) => {
 const restaurantgetAllOrders = async(req, res) => {
     try {
         const orderId = req.params.id
-        const foods = await foodServices.find()
+        const foods = await foodServices.getFoods()
         const foodIds = foods.map((u) => u._id)   //food Ids
         //console.log(foodIds.toString())
         
@@ -109,7 +109,7 @@ const restaurantgetAllOrders = async(req, res) => {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found1')
         }
 
-        const cart = await cartServices.getCart(order.cart)
+        const cart = await cartServices.getCarts(order.cart)
         if (!cart) {
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Cart not found');
         }
@@ -119,7 +119,7 @@ const restaurantgetAllOrders = async(req, res) => {
         let NoFoodorders = []
         let getOrderFromRestaurant = []
 
-        const food = await foodServices.getFood(cart.foods._id)
+        const food = await foodServices.getFoods(cart.foods._id)
         //console.log(food)
         if (!food) {
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Food not found');
@@ -156,8 +156,8 @@ const restaurantgetAllOrders = async(req, res) => {
 module.exports = {
     createRestaurant,
     getAllRestaurant,
-    //getByIdRestaurant,
+    getByIdRestaurant,
     deleteRestaurant,
     updateRestaurant,
-    //restaurantgetAllOrders
+    restaurantgetAllOrders
 }

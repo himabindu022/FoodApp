@@ -5,7 +5,7 @@ const createUser  = async(body) => {
 }
 
 const getUser = async(id) => {
-    return User.find(id)
+    return User.findById(id)
 }
 
 const getUsers = async() => {

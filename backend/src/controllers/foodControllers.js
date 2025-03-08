@@ -37,11 +37,12 @@ const getFood = async(req, res, next) => {
 
 const createFood = async(req, res, next) => {
     try {
-        const { title, description, price, foodtags, category, isAvailable, rating, restaurant} = req.body
+        const { title, description, price, foodtags, category, isAvailable, rating, restaurantId} = req.body
 
         if(!title ||!description ||!price ||!category ||!isAvailable ||!rating ||!restaurantId ||!offers ||!images) {
             return res.status(400).json({ message: "Please fill in all fields" })
         }
+
         const createFood = new foodServices.createFood({
             title,
             description,

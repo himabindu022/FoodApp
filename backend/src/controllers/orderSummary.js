@@ -1,11 +1,11 @@
 const { OrderSummary, orderSummary } = require('../models/orderSummary')
-const { Cart} = require('../models/cartModel')
+const { cartServices } = require('../services/index')
 
 const createOrderSummary = async( req, res) => {
     try {
         const { order, delivery } = req.body
 
-        const cart  = await Cart.findOne({orderId: order})
+        const cart  = await cartServices.getCarts({orderId: order})
 
         if(!cart){
             return res.status(404).json({message: 'Cart not found'})

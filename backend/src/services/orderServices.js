@@ -10,7 +10,7 @@ const getAllOrder = async() => {
 
 
 const getOrder = async(id) => {
-    return Order.findById(id)
+    return Order.findById({id})
 }
 
 

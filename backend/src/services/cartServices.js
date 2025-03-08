@@ -4,7 +4,7 @@ const createCart = async(body) => {
     return Cart.create(body)
 }
 
-const getAllCart = async() => {
+const getCarts = async() => {
     return Cart.find()
 }
 
@@ -25,7 +25,7 @@ const deleteCart = async(id) => {
 
 module.exports = {
     createCart,
-    getAllCart,
+    getCarts,
     getCart,
     updateCart,
     deleteCart

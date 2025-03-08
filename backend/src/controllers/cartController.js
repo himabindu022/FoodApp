@@ -1,9 +1,15 @@
-const { Cart } = require("../models/cartModel");
-const { Food } = require("../models/foodModel");
-const { User } = require("../models/userModel");
+// const { Cart } = require("../models/cartModel");
+// const { Food } = require("../models/foodModel");
+// const { User } = require("../models/userModel");
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
+const { 
+  cartServices,
+  foodServices,
+  userServices 
+} = require('../services/index.js')
+
 
 const createCart = async (req, res) => {
   try {
@@ -12,8 +18,8 @@ const createCart = async (req, res) => {
       return res.status(400).send("Buyer or food ID is missing.");
     }
 
-    const user = await User.findById(buyer);  
-    const food = await Food.findById(foods); 
+    const user = await userServices.getUsers({buyer:buyer});  
+    const food = await foodServices.getFoods({foods:foods}); 
 
     if (!user) {
       return res.status(404).send("User not found");
@@ -23,7 +29,7 @@ const createCart = async (req, res) => {
       return res.status(404).send("Food not found");
     }
 
-    let cart = await Cart.findOne({ buyer: buyer});
+    let cart = await cartServices.getCarts({ buyer: buyer});
   
     if(cart) {
       const foodItemIdx = cart.foods.findIndex((item) => item.foods._id.toString() === food._id.toString())
@@ -38,7 +44,7 @@ const createCart = async (req, res) => {
       await cart.save()
       return successResponse(res, httpStatusCode.CREATED,'success', 'Food added to cart', cart)
     } else {
-      const newCart = new Cart({
+      const newCart = new cartServices.createCart({
         buyer: buyer,
         foods: [{ foods, quantity : quantity || 1, totalPrice : (quantity || 1) * food.price }]
       });
@@ -53,7 +59,7 @@ const createCart = async (req, res) => {
 
 const getAllCart = async (req, res) => {
   try {
-    const cart = await Cart.find();
+    const cart = await cartServices.getCarts();
 
     if (!cart) {
       errorResponse(res, httpStatusCode.NOT_FOUND,'error', "Cart not found" );
@@ -67,7 +73,7 @@ const getAllCart = async (req, res) => {
 
 const getByIdCart = async (req, res) => {
   try {
-    const cart = await Cart.findById(req.params.id).populate({path:"foods", select:'title price'}).populate({path:"buyer", select: "name"});
+    const cart = await cartServices.getCart(req.params.id).populate({path:"foods", select:'title price'}).populate({path:"buyer", select: "name"});
     console.log(cart)
     if (!cart) {
       // errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );
@@ -129,9 +135,9 @@ const getByIdCart = async (req, res) => {
 const removeItemFromCart = async (req, res) => {
   try {
     const { buyer } = req.body
-    const cart = await Cart.findOne({buyer: buyer})
+    const cart = await cartServices.getCart({buyer: buyer})
     const foodId = req.params.id
-    const food = await Food.findById(foodId); 
+    const food = await foodServices.getFood(foodId); 
 
     if (!cart) {
       return errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Cart not found" );

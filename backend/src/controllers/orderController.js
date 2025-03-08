@@ -18,7 +18,7 @@ const createOrder = async(req, res) => {
     try {
         const { buyer, cart, status } = req.body
         //console.log(req.body)
-        const carts = await cartServices.getCart({buyer: req.body.buyer})
+        const carts = await cartServices.getAllCart(req.body.buyer)
         //console.log(carts)
 
         if(!carts){
@@ -29,10 +29,36 @@ const createOrder = async(req, res) => {
             buyer,
             cart: carts,
             status
-        });
-        await order.save();
+            })
+
+            const statusdata = setInterval(()=>{
+                if(order){
+                    order.map((item) => {
+                        if(item.status === 'delivered'){
+                            console.log('order is delivered')
+                    }})
+                }
+            },10000000)
+        await order.save(statusdata);
         console.log(order)
         return successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', order)
+
+        // const task = new OrderStatus()
+                    
+        // task.on('started', () => {
+        //     res.json('Task started');
+        //   });
+          
+        //   task.on('progress', (progress) => {
+        //     res.json(`Progress: ${progress}%`);
+        //   });
+          
+        //   task.on('completed', () => {
+        //     res.json('Task completed');
+        //   });
+        // task.start()
+        // await task.save()
+        // //console.log(task)
     } catch (error) {
         console.log(error);
         errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, 'error', 'Internal Server Error')
@@ -116,22 +142,6 @@ const trackOrder = async(req, res) => {
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found1" )
         }
-                    const task = new OrderStatus()
-                    
-                    task.on('started', () => {
-                        res.json('Task started');
-                      });
-                      
-                      task.on('progress', (progress) => {
-                        res.json(`Progress: ${progress}%`);
-                      });
-                      
-                      task.on('completed', () => {
-                        res.json('Task completed');
-                      });
-                    task.start()
-                    await task.save()
-                    //console.log(task)
 
         return successResponse(res, httpStatusCode.CREATED, 'success', 'tracking the order', {
             order: order,
@@ -142,7 +152,6 @@ const trackOrder = async(req, res) => {
                     totalPrice:item.totalPrice
                 })),
                 status: order.status,
-                orderStatus: task
         })
     } catch (error) {
         console.log(error)

@@ -1,4 +1,4 @@
-const { Category } = require('../models/categoryModel')
+const { categoryServices } = require('../services/index.js')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
@@ -10,7 +10,7 @@ const createCategory = async(req, res) => {
         console.log(imageUrl)
         console.log(req.file)
 
-        const category = new Category({
+        const category = new categoryServices.createCategory({
             title,
             imageUrl
         })
@@ -23,7 +23,7 @@ const createCategory = async(req, res) => {
 
 const getAllCategories = async(req, res) => {
     try {
-        const category = await Category.find()
+        const category = await categoryServices.getCategories()
 
         if(!category) {
             errorResponse(res,httpStatusCode.NOT_FOUND, 'error','No data found')
@@ -38,7 +38,7 @@ const getAllCategories = async(req, res) => {
 
 const getByIdCategory = async(req, res) => {
     try {
-        const category = await Category.findById(req.params.id)
+        const category = await categoryServices.getCategory(req.params.id)
         
         if(!category) {
             return res.status(404).json({message:'No data found'})
@@ -54,7 +54,7 @@ const getByIdCategory = async(req, res) => {
 const updateCategory = async(req, res) => {
     try {
         const { title } = req.body
-        const category = await Category.findOne({_id:req.params.id})
+        const category = await categoryServices.getCategories({_id:req.params.id})
 
         if(!category) {
             errorResponse(res,httpStatusCode.NOT_FOUND,'error','no data found')
@@ -80,7 +80,7 @@ const updateCategory = async(req, res) => {
 
 const deleteCategory = async(req, res) => {
     try {
-        const category = await Category.findByIdAndDelete(req.params.id)
+        const category = await categoryServices.deleteCategory(req.params.id)
 
         if(!category) {
             errorResponse(res,httpStatusCode.NOT_FOUND,'success','no data found', category)
