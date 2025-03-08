@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+const citiesInIndia = require('../constants/citiesInIndia')
+const CategorySchema = require('./categoryModel')
+const  addressSchema   = require('../models/addressModel')
 
 const restaurantSchema = mongoose.Schema ({
     title : {
@@ -7,25 +10,25 @@ const restaurantSchema = mongoose.Schema ({
         max:30,
         required : [true, "title is required"]
     },
-    imageUrl : {
+    description : {
         type : String,
     },
+    category : CategorySchema,
     foods: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Food',
     }],
-    time : {
-        type: String,
+    timings : {
+        opening: {
+            type: String,
+            required: [true, "opening time is required"],
+        },
+        closing: {
+            type: String,
+            required: [true, "closing time is required"],
+        } 
     },
-    pickUp: {
-        type: String,
-        dafault: true
-    },
-    delivery : {
-        type: String,
-        default: true
-    },
-    isOpen:{
+    isAvailable:{
         type:Boolean,
         default:true
     },
@@ -38,20 +41,30 @@ const restaurantSchema = mongoose.Schema ({
         min:1,
         max:5
     },
-    ratingCount:{
-        type:Number,
-    },
-    code: {
+    gstNumber: {
         type: Number,
     },
-    order : {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: 'Order',
+    fssaiCertified: {
+        type: Boolean,
+        default: false
     },
-    buyer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }
+    location: addressSchema
+     // pickUp: {
+    //     type: String,
+    //     dafault: true
+    // },
+    // delivery : {
+    //     type: String,
+    //     default: true
+    // },
+    // order : {
+    //      type: mongoose.Schema.Types.ObjectId,
+    //      ref: 'Order',
+    // },
+    // buyer: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    // }
     },
     { timestamps: true }
 )

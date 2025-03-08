@@ -1,6 +1,6 @@
 const { User} = require('../models/userModel')
 
-const createuser  = async(body) => {
+const createUser  = async(body) => {
     return  User.create(body)
 }
 
@@ -21,7 +21,7 @@ const deleteUser = async(id) => {
 }
 
 module.exports = {
-    createuser,
+    createUser,
     getUser,
     getUsers,
     updateUser,

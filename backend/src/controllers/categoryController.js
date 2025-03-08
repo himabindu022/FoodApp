@@ -21,7 +21,6 @@ const createCategory = async(req, res) => {
     }
 }
 
-
 const getAllCategories = async(req, res) => {
     try {
         const category = await Category.find()

@@ -1,4 +1,4 @@
-const { Food } = require('../models/foodModel') 
+const { foodServices } = require('../services/index.js') 
 const mongoose = require('mongoose')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
@@ -6,7 +6,7 @@ const httpStatusCode = require('../constants/httpStatusCode.js')
 
 const getAllFood = async(req, res, next) => {
     try {
-        const foods = await Food.find()
+        const foods = await foodServices.getFoods()
         console.log(foods)
         if(!foods) {
             errorResponse(res,httpStatusCode.NOT_FOUND,error, "No foods found" )
@@ -22,7 +22,7 @@ const getAllFood = async(req, res, next) => {
 
 const getFood = async(req, res, next) => {
     try {
-        const food = await Food.findById(req.params.id).populate('restaurant')
+        const food = await foodServices.getFood(req.params.id).populate('restaurant')
         const foodie = food.toObject()
         console.log({"food":foodie})
         if(!food) {
@@ -39,10 +39,10 @@ const createFood = async(req, res, next) => {
     try {
         const { title, description, price, foodtags, category, isAvailable, rating, restaurant} = req.body
 
-        if(!title ||!description ||!price ||!foodtags ||!category ||!isAvailable ||!rating ||!restaurant) {
+        if(!title ||!description ||!price ||!category ||!isAvailable ||!rating ||!restaurantId ||!offers ||!images) {
             return res.status(400).json({ message: "Please fill in all fields" })
         }
-        const createFood = new Food({
+        const createFood = new foodServices.createFood({
             title,
             description,
             price,
@@ -63,22 +63,22 @@ const createFood = async(req, res, next) => {
 const updateFood = async(req, res) => {
     try {
         const { title, description, price, foodtags, category, isAvailable, rating, restaurant} = req.body
-        const food = await Food.findById(req.params.id)
+        const food = await foodServices.getFood(req.params.id)
      
         if(!food) {
             errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" )
         }
-        const updateFood = {
-            title : title ?? food.title,
-            description : description ?? food.description,
-            price : price ?? food.price,
-            foodtags : foodtags ?? food.foodtags,
-            category : category ?? food.category,
-            isAvailable : isAvailable ?? food.isAvailable,
-            rating : rating ?? food.rating,
-            restaurant : restaurant ?? food.restaurant
-        }
-        const updatedFood = await Food.findByIdAndUpdate({_id:req.params.id}, updateFood, {new: true})
+        // const updateFood = {
+        //     title : title ?? food.title,
+        //     description : description ?? food.description,
+        //     price : price ?? food.price,
+        //     foodtags : foodtags ?? food.foodtags,
+        //     category : category ?? food.category,
+        //     isAvailable : isAvailable ?? food.isAvailable,
+        //     rating : rating ?? food.rating,
+        //     restaurant : restaurant ?? food.restaurant
+        //}
+        const updatedFood = await foodServices.updateFood({_id:req.params.id}, food, {new: true})
         successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', updatedFood)
     } catch (error) {
         console.log(error)
@@ -88,12 +88,12 @@ const updateFood = async(req, res) => {
 
 const deleteFood = async(req, res) => {
     try {
-        const food = await Food.findById(req.params.id)
+        const food = await foodServices.getFood(req.params.id)
 
         if(!food) {
             errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" )
         }
-        const deleted = await Food.findByIdAndUpdate(req.params.id)
+        const deleted = await foodServices.deleteFood(req.params.id)
         successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', deleted)
     } catch (error) {
         console.log(error)
@@ -102,7 +102,7 @@ const deleteFood = async(req, res) => {
 
 const foodAggre = async (req, res) => {
     try {
-        const foodss = await Food.aggregate([
+        const foodss = await foodServices.aggregate([
         {
             $match: {
                 isAvailable: true

@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt")
 const validator = require('validator');
 const fs = require('fs')
 
+const  addressSchema   = require('../models/addressModel')
+
 //schema
 const userSchema = new mongoose.Schema({
     username: {
@@ -29,44 +31,50 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    address: {
-        type: Array,
-    },
-    phone: {
+    address: addressSchema,
+    phoneNumber: {
         type: String,
-        // required: [true, 'Phone number is required']
+        required: [true, 'Phone number is required']
     },
     role : {
         type : String,
-        // required : [true, 'User type is required'],
+        required : [true, 'User type is required'],
         default: 'client',
-        enum : ['client', 'admin', 'vendor', 'user', 'moderator', 'editor','viewer']
+        enum : ['admin','owner','customer']
     },
+    gender: {
+        type: String,
+        enum:["FEMALE", "MALE"],
+        required: [true, 'Gender is required'],
+    },
+    order: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
+    }
 })
 
+// userSchema.pre("save", async function(next) {
+//      if (!this.isModified('password'))
+//         next()
+//         try {
+//             this.password = await bcrypt.hash(this.password, 10)
+//             next()
+//         } catch (error) {
+//             console.log(error)
+//         }
+//     })
 
-userSchema.pre("save", async function(next) {
-     if (!this.isModified('password'))
-        next()
-        try {
-            this.password = await bcrypt.hash(this.password, 10)
-            next()
-        } catch (error) {
-            console.log(error)
-        }
-    })
+// userSchema.post("save", function(doc, next) {
+//     const information = `this new user data name ${doc.name} and userType ${doc.usertype}`
+//     const text = fs.writeFile ('../text.txt', information, 'utf-8', (err) => {
+//         if (err) {
+//             console.log(err)
+//         }
+//          console.log(text)
+//          next()
+//     })
 
-userSchema.post("save", function(doc, next) {
-    const information = `this new user data name ${doc.name} and userType ${doc.usertype}`
-    const text = fs.writeFile ('../text.txt', information, 'utf-8', (err) => {
-        if (err) {
-            console.log(err)
-        }
-         console.log(text)
-         next()
-    })
-
-})
+// })
 
 const User = mongoose.model('User', userSchema)
 

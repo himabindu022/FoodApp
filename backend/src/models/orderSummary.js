@@ -1,14 +1,12 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const addressSchema = require('./addressModel');
 
 const orderSummarySchema = mongoose.Schema({
     order: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref : 'Order'
     },
-    delivery: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Delivery'
-    }
+    address: addressSchema
 })
 
 const orderSummary = mongoose.model('orderSummary', orderSummarySchema)

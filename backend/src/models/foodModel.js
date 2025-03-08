@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const categorySchema  = require('../models/categoryModel')
+
 
 const FoodSchema = new mongoose.Schema ({
     title : {
@@ -13,18 +15,15 @@ const FoodSchema = new mongoose.Schema ({
         type: Number,
         required: [true,'price is require']
     },
-    foodtags : {
+    images : [{
         type : String,
-    },
-    category: {
-        type: String,
-        enum:['chicken pizza', 'veg pizza', 'non veg pizza']
-    },
+    }],
+    category: categorySchema,
     isAvailable: {
         type: Boolean,
         default: true
     },
-    restaurant: {
+    restaurantId: {
         type : mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant'
     },
@@ -33,6 +32,10 @@ const FoodSchema = new mongoose.Schema ({
         default: 1,
         min:1,
         max:5
+    },
+    offers: {
+        type: Number,
+        default: 0
     }
     },
     { timestamps: true }

@@ -5,9 +5,9 @@ const OrderSchema = mongoose.Schema ({
         type : mongoose.Schema.Types.ObjectId,
         ref:'Food'
     },
-    payment : {
-        type : Number,
-    },
+    // payment : {
+    //     type : Number,
+    // },
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cart'
@@ -21,6 +21,10 @@ const OrderSchema = mongoose.Schema ({
         enum:['preparing','prepared', 'on the way', 'reached','delivered', 'cancelled'],
         default: 'preparing'
     },
+    orderDate: {
+        type: Date,
+        default: Date.now
+    }
     },
     { timestamps: true }
 )

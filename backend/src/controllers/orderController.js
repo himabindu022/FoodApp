@@ -1,26 +1,31 @@
-const { Order } = require('../models/orderModel')
-const { Cart } = require('../models/cartModel.js')
-const { User } = require('../models/userModel.js')
-const { Delivery } = require('../models/deliveryModel.js')
+// const { Order } = require('../models/orderModel')
+// const { Cart } = require('../models/cartModel.js')
+// const { User } = require('../models/userModel.js')
 const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
 const myEmitters = require("events")
 const { OrderStatus } = require('../middleware/userEmitter')
 
+const { 
+    orderServices,
+    cartServices,
+    userServices
+} = require('../services/index.js')
+
 //placeOrder
 const createOrder = async(req, res) => {
     try {
         const { buyer, cart, status } = req.body
         //console.log(req.body)
-        const carts = await Cart.findOne({buyer: req.body.buyer})
+        const carts = await cartServices.getCart({buyer: req.body.buyer})
         //console.log(carts)
 
         if(!carts){
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Cart not found6')
         }
 
-        const order = new Order({
+        const order = new orderServices.createOrder({
             buyer,
             cart: carts,
             status
@@ -36,7 +41,7 @@ const createOrder = async(req, res) => {
 
 const getAllOrders = async(req, res) => {
     try {
-        const order = await Order.find()
+        const order = await orderServices.getOrders()
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', "No orders found5",)
@@ -50,7 +55,7 @@ const getAllOrders = async(req, res) => {
 
 const getByIdOrder = async(req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate('buyer').populate('cart').populate('foods')
+        const order = await orderServices.getOrder(req.params.id).populate('buyer').populate('cart').populate('foods')
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found4" )
@@ -66,8 +71,8 @@ const getByIdOrder = async(req, res) => {
 //update Order Status
 const updateOrder = async(req, res) => {
     try {
-        const { food, payment, buyer, status} = req.body
-        const order = await Order.findByIdAndUpdate(req.params.id)
+        const { food, buyer, status} = req.body
+        const order = await orderServices.getOrder(req.params.id)
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found3" )
@@ -77,7 +82,7 @@ const updateOrder = async(req, res) => {
         //order.buyer = buyer ?? order.buyer,
         order.status = status ?? order.status
 
-        const updateOrder = await Order.findByIdAndUpdate(req.params.id, order, {new:true})
+        const updateOrder = await orderServices.updateOrder(req.params.id, order, {new:true})
         return successResponse(res, httpStatusCode.CREATED, 'success', "Order status updated successfully", updateOrder )
     } catch (error) {
         console.log(error)
@@ -89,7 +94,7 @@ const updateOrder = async(req, res) => {
 //cancel order
 const deleteOrder = async(req,res) => {
     try {
-        const order = await Order.findById(req.params.id)
+        const order = await orderServices.getOrder(req.params.id)
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found2" )
@@ -106,7 +111,7 @@ const deleteOrder = async(req,res) => {
 const trackOrder = async(req, res) => {
     try {
         const { cart } = req.body
-        const order = await Order.findById(cart).populate('cart').populate('buyer').populate('foods.food')
+        const order = await orderServices.getOrder(cart).populate('cart').populate('buyer').populate('foods.food')
 
         if(!order) {
             return errorResponse(res, httpStatusCode.NOT_FOUND , 'error', "No data found1" )
@@ -114,19 +119,19 @@ const trackOrder = async(req, res) => {
                     const task = new OrderStatus()
                     
                     task.on('started', () => {
-                        console.log('Task started');
+                        res.json('Task started');
                       });
                       
                       task.on('progress', (progress) => {
-                        console.log(`Progress: ${progress}%`);
+                        res.json(`Progress: ${progress}%`);
                       });
                       
                       task.on('completed', () => {
-                        console.log('Task completed');
+                        res.json('Task completed');
                       });
                     task.start()
                     await task.save()
-                    console.log(task)
+                    //console.log(task)
 
         return successResponse(res, httpStatusCode.CREATED, 'success', 'tracking the order', {
             order: order,
