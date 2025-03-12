@@ -1,4 +1,4 @@
-const { User} = require('../models/userModel')
+const { User } = require('../models/userModel')
 
 const createUser  = async(body) => {
     return  User.create(body)
@@ -12,8 +12,8 @@ const getUsers = async() => {
     return User.find({})
 }
 
-const updateUser = async(id) => {
-    return User.findByIdAndUpdate(id)
+const updateUser = async(id, body) => {
+    return User.findByIdAndUpdate(id, body, { new: true})
 }
 
 const deleteUser = async(id) => {

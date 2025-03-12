@@ -5,8 +5,8 @@ const { createOrder, getAllOrders, getByIdOrder, updateOrder,deleteOrder, trackO
 const validate = require('../middleware/validate')
 const orderValidation = require('../validations/orderValidation.js')
 
-route.post('/',validate(orderValidation), createOrder)
-route.get('/', getAllOrders)
+route.post('/', createOrder)
+//route.get('/', getAllOrders)
 
 route.get('/:id', getByIdOrder)
 route.patch('/:id', updateOrder)

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const citiesInIndia = require('../constants/citiesInIndia')
 const CategorySchema = require('./categoryModel')
-const  addressSchema   = require('../models/addressModel')
 
 const restaurantSchema = mongoose.Schema ({
     title : {
@@ -14,10 +13,10 @@ const restaurantSchema = mongoose.Schema ({
         type : String,
     },
     category : CategorySchema,
-    foods: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Food',
-    }],
+    // foods: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Food',
+    // }],
     timings : {
         opening: {
             type: String,
@@ -48,7 +47,11 @@ const restaurantSchema = mongoose.Schema ({
         type: Boolean,
         default: false
     },
-    location: addressSchema
+    location: {
+        type: String,
+        enum: citiesInIndia,
+        required: [true, "location is required"],
+    }
      // pickUp: {
     //     type: String,
     //     dafault: true

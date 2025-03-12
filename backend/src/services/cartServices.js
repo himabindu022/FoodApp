@@ -8,16 +8,13 @@ const getCarts = async() => {
     return Cart.find()
 }
 
-
 const getCart = async(id) => {
     return Cart.findById(id)
 }
 
-
 const updateCart = async(id, body) => {
     return Cart.findOneAndUpdate(id, body,{new: true})
 }
-
 
 const deleteCart = async(id) => {
     return Cart.findOneAndDelete(id)

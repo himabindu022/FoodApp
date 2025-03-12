@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
 const addressSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true,'required field']
-    },
+    // name: {
+    //     type: String,
+    //     required: [true,'required field']
+    // },
     state: {
         type: String,
         required: [true,'required field']
@@ -21,10 +21,10 @@ const addressSchema = new mongoose.Schema({
         type: String,
         required: [true,'required field']
     },
-    phone: {
-        type: String,
-        required: [true,'required field']
-    },
+    // phone: {
+    //     type: String,
+    //     required: [true,'required field']
+    // },
     // order: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Order',

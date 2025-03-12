@@ -18,7 +18,10 @@ const FoodSchema = new mongoose.Schema ({
     images : [{
         type : String,
     }],
-    category: categorySchema,
+    category: {
+        type: String,
+        enum : categorySchema.types,
+    },
     isAvailable: {
         type: Boolean,
         default: true
@@ -34,7 +37,7 @@ const FoodSchema = new mongoose.Schema ({
         max:5
     },
     offers: {
-        type: Number,
+        type: String,
         default: 0
     }
     },

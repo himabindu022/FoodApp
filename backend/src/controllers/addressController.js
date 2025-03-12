@@ -7,7 +7,7 @@ const createAddress = async(req, res) => {
     try {
         const {name, state, city, street, blockNo, phone } = req.body
 
-        if(!name ||!state ||!city ||!street ||!block||!phone) {
+        if(!name ||!state ||!city ||!street ||!blockNo||!phone) {
             errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Please fill in all fields.')
         }
         const address = await addressServices. createAddress(req.body)
@@ -21,22 +21,11 @@ const createAddress = async(req, res) => {
 const updateAddress = async(req, res) => {
     try {
         const {id} = req.params
-        const {name, state, city, street, blockNo, phone } = req.body
-
         const address = await addressServices.getAddress({id})
 
         if(!address) {
             errorResponse(res, httpStatusCode.NOT_FOUND,'error', 'Delivery not found.')
         }
-    
-        // delivery.name = name ?? delivery.name,
-        // delivery.address = address ?? delivery.address,
-        // delivery.city = city ?? delivery.city,
-        // delivery.phone = phone ?? delivery.phone,
-        // delivery.order = order ?? delivery.order
-
-        // await address.save
-        // console.log(address)
 
         const newAddress = await addressServices.updateAddress({_id:req.params.id}, address,{new:true})
         successResponse(res,httpStatusCode.CREATED,success,'Updated Successfully ', newAddress );
@@ -47,20 +36,20 @@ const updateAddress = async(req, res) => {
     }
 }
 
-const getAllAddress = async(req,res) => {
-    try {
-        const address = await addressServices.getAllAddresses()
+// const getAllAddress = async(req,res) => {
+//     try {
+//         const address = await addressServices.getAllAddresses()
 
-        if(!delivery) {
-            errorResponse(res,httpStatusCode.NOT_FOUND,error, 'Delivery not found')
-        }
-        successResponse(res, httpStatusCode.CREATED,success,'successfully received', address)
-    } catch (error) {
-        console.log(error)
-        errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
+//         if(!delivery) {
+//             errorResponse(res,httpStatusCode.NOT_FOUND,error, 'Delivery not found')
+//         }
+//         successResponse(res, httpStatusCode.CREATED,success,'successfully received', address)
+//     } catch (error) {
+//         console.log(error)
+//         errorResponse(res, httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal Server Error')
 
-    }
-}
+//     }
+// }
 
 const getByIdAddress = async(req, res) => {
     try {
@@ -96,7 +85,7 @@ const deleteAddress = async(req, res) => {
 }
 module.exports = {
     createAddress,
-    getAllAddress,
+    //getAllAddress,
     getByIdAddress,
     deleteAddress,
     updateAddress

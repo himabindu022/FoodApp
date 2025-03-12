@@ -7,8 +7,9 @@ const paymentSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    patmentMethod: {
+    paymentMethod: {
         type: String,
+        enum:[ 'Netbanking', 'cards', 'UPI', 'Apple Pay'],
         required: true
     },
     paymentStatus : {
@@ -16,9 +17,17 @@ const paymentSchema = mongoose.Schema({
         enum: ['pending', 'paid', 'failed'],
         required: true
     },
+    paymentTime: {
+        type: Date,
+        default: Date.now
+    },
     order: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order',
+    },
+    buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     }
 })
 

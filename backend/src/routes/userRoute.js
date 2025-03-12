@@ -7,9 +7,9 @@ const { getUser, getUsers, updateUser, resetPassword, updatedPassword } = requir
 
 route.get('/getUser/:id', getUser)
 route.get('/getUsers', getUsers)
-route.patch('/updateUser/:id', isAuthorized('moderator','client'),tokenGenerate,validate(userValidation), updateUser)
-route.post('/resetpassword',tokenGenerate, resetPassword)
-route.post('/updatepassword/:id',tokenGenerate, updatedPassword)
+route.patch('/updateUser/:id', updateUser)
+route.post('/resetpassword', resetPassword)
+route.post('/updatepassword/:id', updatedPassword)
 
 
 module.exports = route

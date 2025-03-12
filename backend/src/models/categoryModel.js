@@ -1,10 +1,19 @@
 const mongoose = require('mongoose')
+const foodCategories = require('../constants/categories')
 
 const CategorySchema = new mongoose.Schema ({
-    title : {
-        type : String,
-        required : [true, "title is required"]
-    },
+    food: {
+        category: {
+            type : String,
+            enum : foodCategories.category,
+            required : [true, "title is required"]
+        },
+        types: {
+            type:String,
+            enum:foodCategories.types,
+            required:[true,"type is required"]
+        }
+    }, 
     imageUrl : {
         type : String,
     },

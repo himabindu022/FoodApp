@@ -12,8 +12,8 @@ const getFoods = async() => {
     return Food.find({})
 }
 
-const updateFood = async(id) => {
-    return Food.findByIdAndUpdate(id)
+const updateFood = async(id, body) => {
+    return Food.findByIdAndUpdate(id,body,{ new: true})
 }
 
 const deleteFood = async(id) => {

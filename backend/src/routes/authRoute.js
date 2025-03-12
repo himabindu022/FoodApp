@@ -11,11 +11,11 @@ const successResponse = require('../utils/successResponse.js')
 route.post('/register', registerController)
 route.get('/login', login)
 
-route.post("/login", passport.authenticate("local",{
-    successRedirect: '/sucess',
-    failureRedirect: '/login' ,
-    failureFlash: true, }) , function(req, res) {
-    res.redirect('/')
-})
+// route.post("/login", passport.authenticate("local",{
+//     successRedirect: '/sucess',
+//     failureRedirect: '/login' ,
+//     failureFlash: true, }) , function(req, res) {
+//     res.redirect('/')
+// })
 
 module.exports = route

@@ -22,9 +22,9 @@ const getAllFood = async(req, res, next) => {
 
 const getFood = async(req, res, next) => {
     try {
-        const food = await foodServices.getFood(req.params.id).populate('restaurant')
-        const foodie = food.toObject()
-        console.log({"food":foodie})
+        const food = await foodServices.getFood(req.params.id)//.populate('restaurant')
+        //const foodie = food.toObject()
+        //console.log({"food":foodie})
         if(!food) {
             return res.status(404).json({ message: "Food not found" })
         }
@@ -37,23 +37,13 @@ const getFood = async(req, res, next) => {
 
 const createFood = async(req, res, next) => {
     try {
-        const { title, description, price, foodtags, category, isAvailable, rating, restaurantId} = req.body
+        const { title, description, price, category, isAvailable, rating, restaurantId, images} = req.body
 
-        if(!title ||!description ||!price ||!category ||!isAvailable ||!rating ||!restaurantId ||!offers ||!images) {
+        if(!title ||!description ||!price ||!category ||!isAvailable ||!rating ||!restaurantId ||!images) {
             return res.status(400).json({ message: "Please fill in all fields" })
         }
 
-        const createFood = new foodServices.createFood({
-            title,
-            description,
-            price,
-            foodtags,
-            category,
-            isAvailable,
-            rating,
-            restaurant
-        })
-        await createFood.save()
+        const createFood =await foodServices.createFood( req.body)
         successResponse(res, httpStatusCode.CREATED,'success','created successfully', createFood)
     } catch (error) {
         errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
@@ -63,23 +53,13 @@ const createFood = async(req, res, next) => {
 
 const updateFood = async(req, res) => {
     try {
-        const { title, description, price, foodtags, category, isAvailable, rating, restaurant} = req.body
         const food = await foodServices.getFood(req.params.id)
      
         if(!food) {
             errorResponse(res,httpStatusCode.NOT_FOUND,'error', "Food not found" )
         }
-        // const updateFood = {
-        //     title : title ?? food.title,
-        //     description : description ?? food.description,
-        //     price : price ?? food.price,
-        //     foodtags : foodtags ?? food.foodtags,
-        //     category : category ?? food.category,
-        //     isAvailable : isAvailable ?? food.isAvailable,
-        //     rating : rating ?? food.rating,
-        //     restaurant : restaurant ?? food.restaurant
-        //}
-        const updatedFood = await foodServices.updateFood({_id:req.params.id}, food, {new: true})
+        console.log(req.body)
+        const updatedFood = await foodServices.updateFood({_id:req.params.id}, req.body, {new: true})
         successResponse(res, httpStatusCode.CREATED, 'success', 'updated successfully', updatedFood)
     } catch (error) {
         console.log(error)

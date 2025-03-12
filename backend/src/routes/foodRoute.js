@@ -8,8 +8,8 @@ const { getAllFood, getFood, createFood, updateFood, deleteFood, foodAggre } = r
 route.get('/', getAllFood)
 route.get('/:id', getFood)
 route.post('/', createFood)
-route.patch('/:id',tokenGenerate, updateFood)
-route.delete('/:id', tokenGenerate, deleteFood)
+route.patch('/:id', updateFood)
+route.delete('/:id', deleteFood)
 //route.get('/aggre', foodAggre)
 
 module.exports = route

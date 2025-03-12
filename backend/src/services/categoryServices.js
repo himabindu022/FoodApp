@@ -12,8 +12,8 @@ const getCategories = async() => {
     return Category.find({})
 }
 
-const updateCategory = async(id) => {
-    return Category.findByIdAndUpdate(id)
+const updateCategory = async(id,body) => {
+    return Category.findByIdAndUpdate(id, body,{ new: true})
 }
 
 const deleteCategory = async(id) => {

@@ -2,10 +2,11 @@ const bcrypt = require("bcrypt")
 const { userServices } = require('../services/index')
 const successResponse = require('../utils/successResponse')
 const httpStatusCode = require('../constants/httpStatusCode')
+const { message } = require("../validations/userValidation")
 
 const getUser = async(req, res) => {
     try {
-        const user = await userServices.getUserUser(req.params.id)
+        const user = await userServices.getUser(req.params.id)
         console.log(user)
         if(!user) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
@@ -31,11 +32,11 @@ const getUsers = async(req, res) => {
 
 const updateUser = async( req, res) => {
     try {
-        const updatedUser = await userServices.updateUser({_id:req.params.id},req.body,{new:true});
-        if(!updatedUser) {
+        const updateUser = await userServices.getUser({_id:req.params.id});
+        if(!updateUser) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-        await updateUser.save
+        const updatedUser = await userServices.updateUser({_id:req.params.id},req.body,{new:true});
         successResponse(res, httpStatusCode.CREATED, 'success','user updated successfully', updatedUser)
     } catch (error) {
         console.log(error)
@@ -54,13 +55,12 @@ const resetPassword = async (req, res) => {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error', 'Passwords do not match')
         }
 
-        const user = await userServices.getUsers({ email})
+        const user = await userServices.getUsers({email})
 
         if(!user) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','user not found')
         }
         const hashedPassword = await bcrypt.hash(newpassword,10)
-      
         const updatedUser = await userServices.updateUser({email}, {password: hashedPassword},{new:true}) 
         successResponse(res, httpStatusCode.CREATED, 'success', "reset password successfully", updatedUser)
     } catch (error) {
@@ -71,28 +71,30 @@ const resetPassword = async (req, res) => {
 const updatedPassword = async (req, res) => {
     try {
         const { email, oldPassword, newPassword } = req.body;
+        console.log(req.body)
 
         if (!email || !oldPassword || !newPassword) {
             return res.status(400).json({ message: 'Please provide email, old password, and new password' });
         }
 
-        const user = await userServices.getUsers({ email:email });
+        const user = await userServices.getUser(req.params.id);
+        console.log(user)
         
         if (!user) {
-            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','user not found')
+            return re.status(404).json({message:"Not Found"})
         }
 
-        //console.log(user.password)
+        console.log(user.password)
         const isMatch = await bcrypt.compare(oldPassword, user.password);  
         console.log(isMatch)
         if (!isMatch) {
-            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','Old password is incorrect' );
+            return res.status(403).json({message:'Old password is incorrect'});
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); 
 
-        const updatedHashPassword = await userServices.updateUser({_id: req.params.id}, hashedPassword,{new:true})
-        //console.log(updatedHashPassword)
+        const updatedHashPassword = await userServices.updateUser(req.params.id, hashedPassword,{new:true})
+        console.log(updatedHashPassword)
         successResponse(res, httpStatusCode.CREATED, 'success', 'Password updated successfully', updatedHashPassword);
 
     } catch (error) {

@@ -12,8 +12,8 @@ const getRestaurants = async() => {
     return Restaurant.find({})
 }
 
-const updateRestaurant = async(id) => {
-    return Restaurant.findByIdAndUpdate(id)
+const updateRestaurant = async(id, body) => {
+    return Restaurant.findByIdAndUpdate(id, body,{new:true})
 }
 
 const deleteRestaurant = async(id) => {
@@ -26,5 +26,4 @@ module.exports = {
    getRestaurants,
    updateRestaurant,
    deleteRestaurant
-   
 }

@@ -4,20 +4,21 @@ const successResponse = require('../utils/successResponse.js')
 const errorResponse = require('../utils/errorResponse.js')
 const httpStatusCode = require('../constants/httpStatusCode.js')
 const { 
-    RestaurantServices,
+    restaurantServices,
     foodServices,
     cartServices,
-    orderServices } = require('../services/index.js')
+    orderServices 
+} = require('../services/index.js')
 
 const createRestaurant = async(req, res, next) => {
     try {
-        const {title, foods, timings, location, logoUrl, rating, isAvailable, fssaiCertified, imageUrl} = req.body;
-         console.log(req.body)
-       if(!title ||!foods ||!timings ||!location ||!isAvailable ||!fssaiCertified ||!rating ||!imageUrl ||!logoUrl) {
+        const {title, timings, location, logoUrl, rating, isAvailable, fssaiCertified, imageUrl, category} = req.body;
+        //console.log(req.body)
+       if(!title ||!timings ||!location ||!isAvailable ||!fssaiCertified ||!rating ||!imageUrl ||!logoUrl ||!category) {
               errorResponse(res, httpStatusCode.NOT_FOUND , 'error','Please fill in all fields.');
        }
-
-       const newRestaurant = await RestaurantServices.createRestaurant(req.body)
+ 
+       const newRestaurant = await restaurantServices.createRestaurant(req.body)
        console.log(newRestaurant)
 
         successResponse(res, httpStatusCode.CREATED , 'success','Restaurant created successfully', newRestaurant)
@@ -26,57 +27,52 @@ const createRestaurant = async(req, res, next) => {
     }
 }
 
-const getAllRestaurant = async(req, res, next) => {
+const getAllRestaurants = async(req, res, next) => {
     try {
-        //const features = new APIfeatures(Restaurant.find(),req.query)//.filter().sort()//.limitFields().paginate()
-        //const restaurants = await features.req.query
+        // const page = req.query.page || 1
+        // const limit = req.query.limit || 10
 
-        const page = req.query.page || 1
-        const limit = req.query.limit || 10
+        // const skip = (page-1) * limit
 
-        const skip = (page-1) * limit
+        //const total = await restaurantServices.countDocuments()
 
-        const total = await RestaurantServices.countDocuments()
-
-        const restaurants = await RestaurantServices.getRestaurants().skip(skip).limit(limit)
+        const restaurants = await restaurantServices.getRestaurants()
 
         if(!restaurants){
             res.json('no data found')
         }
         return successResponse(res,httpStatusCode.CREATED,'success',"received all the data of Restaurants", {
-            page,
-            limit,
-            total,
+            //page,
+            //limit,
+            //total,
             restaurants
         })
     } catch (error) {
-        next(err)
+        next(error)
     }
 }
 
-const getByIdRestaurant = async(req, res) => {
-    try {
-        const getRestaurant = await RestaurantServices.getRestaurant({_id:req.params.id}).populate('foods').populate('order').populate('buyer')
-        if(!getRestaurant) {
-           errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
-        }
-        successResponse(res, httpStatusCode.CREATED , 'success',"received all the data of Restaurants", getRestaurant)
-    } catch (error) {
-        console.log(error)
-
-    }
-}
+// const getByIdRestaurant = async(req, res) => {
+//     try {
+//         const getRestaurant = await restaurantServices.getRestaurant({_id:req.params.id})//.populate('foods').populate('order').populate('buyer')
+//         if(!getRestaurant) {
+//            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+//         }
+//         successResponse(res, httpStatusCode.CREATED , 'success',"received all the data of Restaurants", getRestaurant)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
 const updateRestaurant  = async(req, res, next) => {
     try {
-        const update = await RestaurantServices.getRestaurant(req.params.id)
-
+        const update = await restaurantServices.getRestaurant(req.params.id)
+        console.log(update)
         if(!update) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-
-        const updateRestaurant = await RestaurantServices.updateRestaurant(req.params.id, req.body, {new: true})
-        await updateRestaurant.save()
+        console.log(req.body)
+        const updateRestaurant = await restaurantServices.updateRestaurant(req.params.id, req.body, {new: true})
         successResponse(res, httpStatusCode.CREATED , 'success','Updated successfully', updateRestaurant)
     } catch (error) {
         next(error)
@@ -85,7 +81,7 @@ const updateRestaurant  = async(req, res, next) => {
 
 const deleteRestaurant = async(req,res) => {
     try {
-        const deleteRestaurant = await RestaurantServices.getRestaurant(req.params.id)
+        const deleteRestaurant = await restaurantServices.getRestaurant(req.params.id)
 
         if(! deleteRestaurant) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
@@ -134,7 +130,7 @@ const restaurantgetAllOrders = async(req, res) => {
         }
     }
     //const orderFoods = FoodOrders.map(items => items.toString())
-    const restaurants = await RestaurantServices.getRestaurants
+    const restaurants = await restaurantServices.getRestaurants()
 
     for(const restaurant of restaurants) {
          for (const restaurantFood of restaurant.foods){
@@ -153,11 +149,32 @@ const restaurantgetAllOrders = async(req, res) => {
     }
 }
 
+
+const searchRestaurant = async(req, res) => {
+    try {
+        
+        const restaurant = await restaurantServices.getRestaurants({
+            $or:[
+                { 
+                    title: {$regex: req.query , $options:'i'}
+                }
+            ]
+        })
+        if(!restaurant) {
+            return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Restaurant not found')
+        }
+        res.json(restaurant)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = {
     createRestaurant,
-    getAllRestaurant,
-    getByIdRestaurant,
+    //getAllRestaurant,
+    //getByIdRestaurant,
     deleteRestaurant,
     updateRestaurant,
-    restaurantgetAllOrders
+    //restaurantgetAllOrders,
+    searchRestaurant
 }

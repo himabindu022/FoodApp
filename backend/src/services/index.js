@@ -4,5 +4,6 @@ module.exports= {
     foodServices: require('./foodServices'),
     cartServices: require('./cartServices'),
     addressServices: require('./addressServices'),
-    orderServices: require('./orderServices')
+    orderServices: require('./orderServices'),
+    paymentServices: require('./paymentServices')
 }
