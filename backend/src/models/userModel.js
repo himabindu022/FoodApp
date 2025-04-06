@@ -3,7 +3,9 @@ const bcrypt = require("bcrypt")
 const validator = require('validator');
 const fs = require('fs')
 
-const  addressSchema   = require('../models/addressModel')
+const  addressSchema   = require('../models/addressModel');
+const { instance } = require('../validations/userValidation');
+const { required } = require('joi');
 
 //schema
 const userSchema = new mongoose.Schema({
@@ -47,26 +49,39 @@ const userSchema = new mongoose.Schema({
         enum:["FEMALE", "MALE"],
         required: [true, 'Gender is required'],
     },
-    order: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order',
-    },
-    cart: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart',
-    }
+    // order: {
+    //    type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'Order',
+    //},
+    // cart: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Cart',
+    // },
+    tokens: [{ 
+        token : {
+            type: String,
+            required: true
+        }
+    }]
 })
 
+
+userSchema.methods.generateAuthToken = async function(){
+    const user = this
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY)
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+    return token
+  }
+
+
 // userSchema.pre("save", async function(next) {
-//      if (!this.isModified('password'))
-//         next()
-//         try {
-//             this.password = await bcrypt.hash(this.password, 10)
-//             next()
-//         } catch (error) {
-//             console.log(error)
+//     const user = this
+//     if (!user.isModified('password')) {
+//             user.password = await bcrypt.hash(this.password, 10)
 //         }
-//     })
+//         next()
+// })
 
 // userSchema.post("save", function(doc, next) {
 //     const information = `this new user data name ${doc.name} and userType ${doc.usertype}`
