@@ -5,7 +5,7 @@ const createRestaurant  = async(body) => {
 }
 
 const getRestaurant = async(id) => {
-    return Restaurant.findById(id)
+    return Restaurant.findById(id).populate('food')
 }
 
 const getRestaurants = async() => {

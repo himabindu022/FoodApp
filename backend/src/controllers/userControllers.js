@@ -3,15 +3,18 @@ const { userServices } = require('../services/index')
 const successResponse = require('../utils/successResponse')
 const httpStatusCode = require('../constants/httpStatusCode')
 const { message } = require("../validations/userValidation")
+const { food } = require('../models/foodModel')
 
 const getUser = async(req, res) => {
     try {
         const user = await userServices.getUser(req.params.id)
+        await user.populate('restaurant')
         console.log(user)
         if(!user) {
             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-       successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully', user)
+
+       successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully', user,user.food)
     } catch (error) {
         console.log(error)
     }
@@ -77,11 +80,11 @@ const updatedPassword = async (req, res) => {
             return res.status(400).json({ message: 'Please provide email, old password, and new password' });
         }
 
-        const user = await userServices.getUser(req.params.id);
+        const user = await userServices.getUser({_id:req.params.id});
         console.log(user)
         
         if (!user) {
-            return re.status(404).json({message:"Not Found"})
+            return res.status(404).json({message:"Not Found"})
         }
 
         console.log(user.password)

@@ -6,6 +6,7 @@ const dotenv = require('dotenv')
 const passport = require('passport')
 const flash = require('connect-flash');
 const myEmitters = require("events")
+const path = require("path");
 //const localStrategy  = require('passport-local').Strategy
 const session = require('express-session')
 const bodyparser = require('body-parser')
@@ -26,6 +27,7 @@ const globalErrorHandler = require('./src/utils/globalErrorhandler.js')
 //mongoDB session storage
 const MongoStore = require('connect-mongo')
 
+
 //dotenv configuration
 dotenv.config()
 
@@ -38,7 +40,10 @@ app.use(errorMiddleware)
 //Express rate limit middleware
 app.use('/api/', limits)
 
-//Middlewares
+//static files
+app.use(express.static(path.join(__dirname,"public")))
+
+//global Middlewares
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(cors())
@@ -67,6 +72,13 @@ app.use(passport.session())
 app.use(flash())
 app.use(globalErrorHandler)
 
+
+const corsOptions = {
+    origin: "http://localhost:5000",
+    methods: ["GET" , "POST"],
+    allowedHeaders: ['Authorization', 'Content-Type']
+}
+
 //route
 //URL:http://localhost:3000
 
@@ -84,6 +96,7 @@ app.use('/api/v1/cart', cartRoute)
 //Default Route for all (cache all routes) 
 app.all('*', (req, res, next) =>{
    res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
+   next()
 })
 
 

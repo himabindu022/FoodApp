@@ -4,7 +4,7 @@ const validator = require('validator');
 const fs = require('fs')
 
 const  addressSchema   = require('../models/addressModel')
-
+const virtuals  = require('../utils/virtuals')
 //schema
 const userSchema = new mongoose.Schema({
     username: {
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
         required: [true, 'password is required'],
         //select: false
         validate(value) {
-            if(!value.match(/\d/) || !value.match(/[a-zA-Z]/ ||!value.length<8)) {
+            if(!value.match(/\d/) || !value.match(/[a-zA-Z]/ || !value.length<8)) {
                 throw new Error('password must be at least 8 characters and must contain at least one number')
             }
         }
@@ -54,8 +54,16 @@ const userSchema = new mongoose.Schema({
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cart',
+    },        
+},
+{
+    toJSON: { virtuals:true},
+    toObject: { virtuals: true}
     }
-})
+)
+
+virtuals(userSchema, 'food', 'Food', 'user')
+virtuals(userSchema, 'restaurant', 'Restaurant', 'user')
 
 // userSchema.pre("save", async function(next) {
 //      if (!this.isModified('password'))

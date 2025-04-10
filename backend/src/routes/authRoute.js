@@ -7,9 +7,10 @@ const validate = require('../middleware/validate.js')
 const userValidation = require('../validations/userValidation.js')
 const passportConfig = require('../../config/passport.js')//import passport config
 const successResponse = require('../utils/successResponse.js')
+const { registrationValidation , loginValidation } = require('../../helper/authValidator.js')
 
-route.post('/register', registerController)
-route.get('/login', login)
+route.post('/register', registrationValidation, registerController)
+route.get('/login', loginValidation, login)
 
 // route.post("/login", passport.authenticate("local",{
 //     successRedirect: '/sucess',

@@ -81,66 +81,70 @@ const deleteFood = async(req, res) => {
     }
 }
 
-const foodAggre = async (req, res) => {
-    try {
-        const foodss = await foodServices.aggregate([
-        {
-            $match: {
-                isAvailable: true
-            }
-        },
-        {
-            $addFields: {
-                _id: "$category",
-                name: "$title",
-                available: "$isAvailable",
-                total: "$price",
-                rating: "$rating",
-                category: "$category"
-            }
-         },
-        //  {
-        //     $lookup:{
-        //         from:"restaurant",
-        //         localField: "restaurant",
-        //         foreignField: "_id",
-        //         as:"restaurant"
-        //     }
-        //  },
-        //  {
-        //     $project:{
-        //         resturant: {
-        //             $arrayElemAt: ["$restaurant.foods", 0] 
-        //         },
-        //         _id: 0
+// const foodAggre = async (req, res) => {
+//     try {
+//         const foodss = await foodServices.aggregate([
+//         {
+//             $match: {
+//                 $or: [
+//                     isAvailable: true,
 
-        //     }
-        //  },
-        // {
-        //     $lookup: {
-        //         from:"food",
-        //         localFields: "food",
-        //         foreignField: "_id",
-        //         as: "food"
-        //     }
-        // },
-        // {
-        //     $project: {
-        //         food:{
-        //             $arrayElemAt: ["$food", 0]
-        //         }
-        //     }
-        // }
+//                 ]
+                    
+//             }
+//         },
+//         {
+//             $addFields: {
+//                 _id: "$category",
+//                 name: "$title",
+//                 available: "$isAvailable",
+//                 total: "$price",
+//                 rating: "$rating",
+//                 category: "$category"
+//             }
+//          },
+//         //  {
+//         //     $lookup:{
+//         //         from:"restaurant",
+//         //         localField: "restaurant",
+//         //         foreignField: "_id",
+//         //         as:"restaurant"
+//         //     }
+//         //  },
+//         //  {
+//         //     $project:{
+//         //         resturant: {
+//         //             $arrayElemAt: ["$restaurant.foods", 0] 
+//         //         },
+//         //         _id: 0
 
-        ])
-        //console.log(foodss)
-        return res.status(200).json(foodss);
-    } catch (error) {
-        console.log(error);
-        errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
+//         //     }
+//         //  },
+//         // {
+//         //     $lookup: {
+//         //         from:"food",
+//         //         localFields: "food",
+//         //         foreignField: "_id",
+//         //         as: "food"
+//         //     }
+//         // },
+//         // {
+//         //     $project: {
+//         //         food:{
+//         //             $arrayElemAt: ["$food", 0]
+//         //         }
+//         //     }
+//         // }
 
-    }
-};
+//         ])
+//         //console.log(foodss)
+//         return res.status(200).json(foodss);
+//     } catch (error) {
+//         console.log(error);
+//         errorResponse(res,httpStatusCode.INTERNAL_SERVER_ERROR, error, 'Internal server Error')
+
+//     }
+// };
 
 
 module.exports = {

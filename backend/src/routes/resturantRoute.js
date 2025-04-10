@@ -6,7 +6,7 @@ const restaurantValidation = require('../validations/restaurantValidation.js')
 const validate = require('../middleware/validate.js')
 const { 
     createRestaurant, 
-    getAllRestaurant, 
+    getAllRestaurants, 
     getByIdRestaurant, 
     deleteRestaurant, 
     updateRestaurant, 
@@ -14,8 +14,8 @@ const {
     searchRestaurant   } = require('../controllers/resturantController')
 
 route.post('/create', /*tokenGenerate,validate(restaurantValidation), upload.single('file')*/ createRestaurant)
-//route.get('/getAll',  getAllRestaurant)
-//route.get('/:id', getByIdRestaurant)
+route.get('/getAll',  getAllRestaurants)
+route.get('/:id', getByIdRestaurant)
 route.delete('/:id', deleteRestaurant)
 route.patch('/:id',updateRestaurant)
 //route.get('/:id', restaurantgetAllOrders)

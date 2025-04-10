@@ -9,6 +9,7 @@ const {
     cartServices,
     orderServices 
 } = require('../services/index.js')
+const pipeline  = require('./match.js')
 
 const createRestaurant = async(req, res, next) => {
     try {
@@ -52,17 +53,19 @@ const getAllRestaurants = async(req, res, next) => {
     }
 }
 
-// const getByIdRestaurant = async(req, res) => {
-//     try {
-//         const getRestaurant = await restaurantServices.getRestaurant({_id:req.params.id})//.populate('foods').populate('order').populate('buyer')
-//         if(!getRestaurant) {
-//            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
-//         }
-//         successResponse(res, httpStatusCode.CREATED , 'success',"received all the data of Restaurants", getRestaurant)
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
+const getByIdRestaurant = async(req, res) => {
+    try {
+        const getRestaurant = await restaurantServices.getRestaurant(req.params.id)
+        //await getRestaurant.populate('food').populate('order').populate('buyer')
+        if(!getRestaurant) {
+           errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+        }
+        res.send(getRestaurant)
+        //return successResponse(res, httpStatusCode.CREATED , 'success',"received all the data of Restaurants", getRestaurant)
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const updateRestaurant  = async(req, res, next) => {
     try {
@@ -153,13 +156,7 @@ const restaurantgetAllOrders = async(req, res) => {
 const searchRestaurant = async(req, res) => {
     try {
         
-        const restaurant = await restaurantServices.getRestaurants({
-            $or:[
-                { 
-                    title: {$regex: req.query , $options:'i'}
-                }
-            ]
-        })
+        const restaurant = await restaurantServices.getRestaurants(pipeline)
         if(!restaurant) {
             return errorResponse(res, httpStatusCode.NOT_FOUND, 'error', 'Restaurant not found')
         }
@@ -171,8 +168,8 @@ const searchRestaurant = async(req, res) => {
 
 module.exports = {
     createRestaurant,
-    //getAllRestaurant,
-    //getByIdRestaurant,
+    getAllRestaurants,
+    getByIdRestaurant,
     deleteRestaurant,
     updateRestaurant,
     //restaurantgetAllOrders,

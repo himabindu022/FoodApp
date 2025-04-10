@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 const categorySchema  = require('../models/categoryModel')
-
-
 const FoodSchema = new mongoose.Schema ({
     title : {
         type : String,
@@ -41,8 +39,10 @@ const FoodSchema = new mongoose.Schema ({
         default: 0
     }
     },
-    { timestamps: true }
-)
+    { timestamps: true },
+    )
+    
+
 
 const Food = mongoose.model( 'Food' , FoodSchema)
 

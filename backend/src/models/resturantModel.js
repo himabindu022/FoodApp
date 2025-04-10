@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const citiesInIndia = require('../constants/citiesInIndia')
 const CategorySchema = require('./categoryModel')
+const virtuals = require('../utils/virtuals')
 
 const restaurantSchema = mongoose.Schema ({
     title : {
@@ -69,8 +70,14 @@ const restaurantSchema = mongoose.Schema ({
     //     ref: 'User',
     // }
     },
-    { timestamps: true }
+    { timestamps: true },
+    {
+        toJSON: { virtuals:true},
+        toObject: { virtuals: true}
+        }
 )
+
+virtuals(restaurantSchema, 'food', 'Food', 'restaurant')
 
 const Restaurant = mongoose.model( 'Restaurant' , restaurantSchema)
 
