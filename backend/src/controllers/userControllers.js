@@ -5,6 +5,7 @@ const httpStatusCode = require('../constants/httpStatusCode')
 const { message } = require("../validations/userValidation")
 const { food } = require('../models/foodModel')
 
+
 const getUser = async(req, res) => {
     try {
         const user = await userServices.getUser(req.params.id)
@@ -20,26 +21,41 @@ const getUser = async(req, res) => {
     }
 }
 
-const getUsers = async(req, res) => {
-    try {
-        const users = await userServices.getUsers({})
+// const getUser = async(req, res) => {
+//     try {
+//         const user = await userServices.getUser(req.user._id)
+//         console.log(user)
+//         if(!user) {
+//             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+//         }
+//        successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully', user)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+
+// const getUsers = async(req, res) => {
+//     try {
+//         const users = await userServices.getUsers({})
       
-        if(users.length === 0) {
-            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
-        }
-        successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully',users)
-    } catch (error) {
-        console.log(error)
-    }
-}
+//         if(users.length === 0) {
+//             errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+//         }
+//         successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully',users)
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
 const updateUser = async( req, res) => {
     try {
-        const updateUser = await userServices.getUser({_id:req.params.id});
-        if(!updateUser) {
-            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
-        }
-        const updatedUser = await userServices.updateUser({_id:req.params.id},req.body,{new:true});
+        const updateUser = req.user._id;
+        console.log(updateUser)
+        // if(!updateUser) {
+        //     errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+        // }
+        const updatedUser = await userServices.updateUser(updateUser,req.user.body,{new:true});
         successResponse(res, httpStatusCode.CREATED, 'success','user updated successfully', updatedUser)
     } catch (error) {
         console.log(error)
@@ -106,8 +122,8 @@ const updatedPassword = async (req, res) => {
 };
 
 module.exports = {
-    getUser,
-    getUsers,
+    //getUser,
+    //getUsers,
     updateUser,
     resetPassword,
     updatedPassword

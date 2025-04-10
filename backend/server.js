@@ -10,16 +10,20 @@ const path = require("path");
 //const localStrategy  = require('passport-local').Strategy
 const session = require('express-session')
 const bodyparser = require('body-parser')
-const connectDB = require('./config/db.js')
-const authRoute = require('./src/routes/authRoute.js')
-const userRoute = require('./src/routes/userRoute.js')
-const restaurantRoute = require('./src/routes/resturantRoute.js')
-const errorMiddleware = require('./src/middleware/errorMiddleware.js')
-const foodRoute = require('./src/routes/foodRoute.js')
-const categoryRoute = require('./src/routes/categoryRoute.js')
-const orderRoute = require('./src/routes/orderRoute.js')
+
+const connectDB = require('./config/db.js')// Database connection
+
+const authRoute = require('./src/routes/authRoute.js') // Handle the auth routes
+const userRoute = require('./src/routes/userRoute.js')  //Handle the user routes
+const restaurantRoute = require('./src/routes/resturantRoute.js')   // Handle the Restaurant routes
+const foodRoute = require('./src/routes/foodRoute.js')  //Handle the food routes
+const cartRoute = require('./src/routes/cartRoute.js')  //Handle the cart Routes
+const orderRoute = require('./src/routes/orderRoute.js')    //Handle the order routes
+const categoryRoute = require('./src/routes/categoryRoute.js')  //Handle the category routes
 // const deliveryRoute = require('./src/routes/deliveryRoute.js')
-const cartRoute = require('./src/routes/cartRoute.js')
+
+//middlewares
+const errorMiddleware = require('./src/middleware/errorMiddleware.js')
 const todoRoute = require("./src/routes/todoListRoute.js")
 const limits = require('./src/middleware/express-rate-limiter')
 const globalErrorHandler = require('./src/utils/globalErrorhandler.js')
@@ -40,6 +44,7 @@ app.use(errorMiddleware)
 //Express rate limit middleware
 app.use('/api/', limits)
 
+<<<<<<< HEAD
 //static files
 app.use(express.static(path.join(__dirname,"public")))
 
@@ -47,6 +52,11 @@ app.use(express.static(path.join(__dirname,"public")))
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(cors())
+=======
+//Middlewares
+app.use(express.json())// Parse the incoming request
+app.use(cors()) 
+>>>>>>> 0135c9bc57345452a47d096ef8792324ac80ec66
 app.use(morgan('dev'))
 
 // app.use(express.json()); // For parsing application/json
@@ -55,22 +65,22 @@ app.use(morgan('dev'))
 // app.use(bodyparser.urlencoded({ extended: true })) //parse incoming url request
 
 //middleware session
-app.use(session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: false,
-    store:MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/session",}),
-    cookie: {
-        maxAge: 1000* 60*60*24
-    }
-}))
+// app.use(session({
+//     secret: 'secret',
+//     resave: false,
+//     saveUninitialized: false,
+//     store:MongoStore.create({mongoUrl: "mongodb://127.0.0.1:27017/session",}),
+//     cookie: {
+//         maxAge: 1000* 60*60*24
+//     }
+// }))
 
 //initial passport and passport-local
-app.use(passport.initialize())
-app.use(passport.session())
+//app.use(passport.initialize())
+//app.use(passport.session())
 
-app.use(flash())
-app.use(globalErrorHandler)
+//app.use(flash())
+//app.use(globalErrorHandler)
 
 
 const corsOptions = {
