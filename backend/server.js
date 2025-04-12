@@ -44,7 +44,7 @@ app.use(errorMiddleware)
 //Express rate limit middleware
 app.use('/api/', limits)
 
-<<<<<<< HEAD
+
 //static files
 app.use(express.static(path.join(__dirname,"public")))
 
@@ -52,11 +52,11 @@ app.use(express.static(path.join(__dirname,"public")))
 app.use(express.json())
 app.use(bodyparser.json())
 app.use(cors())
-=======
+
 //Middlewares
 app.use(express.json())// Parse the incoming request
 app.use(cors()) 
->>>>>>> 0135c9bc57345452a47d096ef8792324ac80ec66
+
 app.use(morgan('dev'))
 
 // app.use(express.json()); // For parsing application/json
@@ -89,8 +89,8 @@ const corsOptions = {
     allowedHeaders: ['Authorization', 'Content-Type']
 }
 
-//route
-//URL:http://localhost:3000
+// //route
+// //URL:http://localhost:3000
 
 app.use("/api/v1/task", todoRoute)
 app.use("/api/v1/auth", authRoute)
@@ -103,7 +103,7 @@ app.use('/api/v1/order', orderRoute)
 app.use('/api/v1/cart', cartRoute)
 
 
-//Default Route for all (cache all routes) 
+// //Default Route for all (cache all routes) 
 app.all('*', (req, res, next) =>{
    res.status(404).json({message: `can't find ${req.originalUrl} on the server`})
    next()

@@ -10,10 +10,10 @@ const successResponse = require('../utils/successResponse.js')
 const { registrationValidation , loginValidation } = require('../../helper/authValidator.js')
 
 
-route.post('/register', registrationValidation, registerController)
-route.get('/login', loginValidation, login)
+// route.post('/register', registrationValidation, registerController)
+// route.get('/login', loginValidation, login)
 
-route.post('/register', tokenGenerate,registerController)
+route.post('/register',registerController)
 route.post('/login', login)
 route.post('/logout', tokenGenerate,logout)
 

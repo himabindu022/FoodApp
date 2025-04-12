@@ -6,8 +6,8 @@ require("dotenv").config();
 
 const tokenGenerate = async (req, res, next) => {
     try {
-        //const token = req.headers.authorization.split(' ')[1];
-        const token = req.headers["authorization"].replace('Bearer ', '' )
+        const token = req.headers.authorization.split(' ')[1];
+        //const token = req.headers["authorization"].replace('Bearer ', '' )
         console.log(token)
         
         if (!token) {
@@ -17,8 +17,8 @@ const tokenGenerate = async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.SECRET_KEY)
             console.log(decoded)
-            const user = await User.findOne({ _id:decoded._id, 'tokens.token': token}); 
-
+            const user = await User.findOne({ _id:decoded.id}) //'tokens.token': token}); 
+            console.log(user)
             if (!user) {
                 return res.status(401).json({ message: 'User not found' });
             }

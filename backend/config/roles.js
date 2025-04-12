@@ -6,4 +6,14 @@ const roles = {
     "client": ["create","read", "update"]
 }
 
-module.exports  =  {roles}
+
+const Allroles = Object.keys(roles)
+console.log(typeof Allroles)
+
+const roleRights = new Map(Object.entries(roles))
+console.log(typeof roleRights)
+
+module.exports  =  {
+    roles,
+    Allroles,
+}

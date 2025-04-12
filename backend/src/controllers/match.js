@@ -18,10 +18,14 @@ const lookUpData = (
  const matchData = (req) => {
     let match = {}
     if(req.query.title) {
-        match['$or'] = [
-            {'restaurant':req.query.title},
-            {'food.title': req.query.title}
-        ]
+        match['title'] = 
+        {
+            $or: [
+                {'restaurant':req.query.title},
+                {'food.title': req.query.title}
+            ]
+        }
+       
         console.log(match)
     }
     if(req.query.food) {

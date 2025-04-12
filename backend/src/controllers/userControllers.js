@@ -2,20 +2,21 @@ const bcrypt = require("bcrypt")
 const { userServices } = require('../services/index')
 const successResponse = require('../utils/successResponse')
 const httpStatusCode = require('../constants/httpStatusCode')
-const { message } = require("../validations/userValidation")
-const { food } = require('../models/foodModel')
-
+//const { message } = require("../validations/userValidation")
+//const { food } = require('../models/foodModel')
 
 const getUser = async(req, res) => {
     try {
-        const user = await userServices.getUser(req.params.id)
-        await user.populate('restaurant')
+        const data = req.user
+        console.log(data)
+        const user = await userServices.getUser(data._id)
+        //await user.populate('restaurant')
         console.log(user)
         if(!user) {
-            errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
+            return errorResponse(res, httpStatusCode.NOT_FOUND , 'error','No data found')
         }
-
-       successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully', user,user.food)
+        return res.send(user)
+       //return successResponse(res, httpStatusCode.CREATED, 'success', 'received Successfully', user,)
     } catch (error) {
         console.log(error)
     }
@@ -122,7 +123,7 @@ const updatedPassword = async (req, res) => {
 };
 
 module.exports = {
-    //getUser,
+    getUser,
     //getUsers,
     updateUser,
     resetPassword,

@@ -39,7 +39,7 @@ const login = async (req,res) => {
             errorResponse(res, httpStatusCode.BAD_REQUEST, 'error', 'Please provide all the fields');
         }
 
-        const user = await User.find({ email })
+        const user = await User.findOne({ email })
         console.log(user)
 
         if (!user) {

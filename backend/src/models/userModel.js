@@ -1,14 +1,16 @@
 const mongoose = require('mongoose')
 const bcrypt = require("bcrypt")
+const jwt = require('jsonwebtoken')
 const validator = require('validator');
 const fs = require('fs')
+const { roles } = require('../../config/roles')
 
 const  addressSchema   = require('../models/addressModel')
 const virtuals  = require('../utils/virtuals')
 
-const  addressSchema   = require('../models/addressModel');
-const { instance } = require('../validations/userValidation');
-const { required } = require('joi');
+//const  addressSchema   = require('../models/addressModel');
+//const { instance } = require('../validations/userValidation');
+//const { required } = require('joi');
 
 
 //schema
@@ -46,32 +48,26 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : [true, 'User type is required'],
         default: 'client',
-        enum : ['admin','owner','customer']
+        //enum : ['admin','owner','customer']
+        enum: Object.keys(roles)
+
     },
     gender: {
         type: String,
         enum:["FEMALE", "MALE"],
         required: [true, 'Gender is required'],
     },
-
-    order: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order',
-    },
-    cart: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cart',
-    },        
+    // tokens: [{ 
+    //     token : {
+    //         type: String,
+    //         required: true
+    //     }
+    // }]       
 },
-{
+    {
     toJSON: { virtuals:true},
     toObject: { virtuals: true}
-    }
-)
-
-virtuals(userSchema, 'food', 'Food', 'user')
-virtuals(userSchema, 'restaurant', 'Restaurant', 'user')
-
+    },
     // order: {
     //    type: mongoose.Schema.Types.ObjectId,
     //   ref: 'Order',
@@ -80,23 +76,20 @@ virtuals(userSchema, 'restaurant', 'Restaurant', 'user')
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Cart',
     // },
-    tokens: [{ 
-        token : {
-            type: String,
-            required: true
-        }
-    }]
-})
+   
+)
+
+virtuals(userSchema, 'food', 'Food', 'user')
+virtuals(userSchema, 'restaurant', 'Restaurant', 'user')
 
 
-
-userSchema.methods.generateAuthToken = async function(){
-    const user = this
-    const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY)
-    user.tokens = user.tokens.concat({ token })
-    await user.save()
-    return token
-  }
+// userSchema.methods.generateAuthToken = async function(){
+//     const user = this
+//     const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY)
+//     user.tokens = user.tokens.concat({ token })
+//     await user.save()
+//     return token
+//   }
 
 
 // userSchema.pre("save", async function(next) {
